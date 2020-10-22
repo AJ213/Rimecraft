@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0fdc39dd673774abe546398f10fd87, type: 3}
+  m_Name: default
+  m_EditorClassIdentifier: 
+  biomeName: default
+  solidGroundHeight: 42
+  terrainheight: 42
+  terrainScale: 0.25
+  lodes:
+  - nodeName: Ice
+    blockID: 2
+    minHeight: 5
+    maxHeight: 255
+    scale: 0.15
+    threshold: 0.5
+    noiseOffset: 0
+  - nodeName: Snow
+    blockID: 1
+    minHeight: 2
+    maxHeight: 255
+    scale: 0.15
+    threshold: 0.5
+    noiseOffset: 500
+  - nodeName: Air
+    blockID: 0
+    minHeight: 2
+    maxHeight: 255
+    scale: 0.05
+    threshold: 0.5
+    noiseOffset: 1000

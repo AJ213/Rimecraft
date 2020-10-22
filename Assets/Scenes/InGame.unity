@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 189.16139, g: 202.00185, b: 202.88907, a: 1}
+  m_IndirectSpecularColor: {r: 207.43643, g: 245.5373, b: 354.46948, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -717,6 +717,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 16747362
+  biome: {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
   player: {fileID: 1224643126}
   spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: a2057a62d0e121f43922d28e5ccb4da9, type: 2}

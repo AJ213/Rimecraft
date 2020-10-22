@@ -5,6 +5,7 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     public int seed;
+    public BiomeAttributes biome;
 
     public Transform player;
     public Vector3 spawnPosition;
@@ -116,14 +117,31 @@ public class World : MonoBehaviour
 
         /* BASIC TERRAIN PASS */
 
-        int terrainHeight = Mathf.FloorToInt(VoxelData.ChunkHeight * Noise.Get2DPerline(new Vector2(pos.x, pos.z), 500, 0.25f));
+        int terrainHeight = Mathf.FloorToInt(biome.terrainheight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, biome.terrainScale)) + biome.solidGroundHeight;
+        byte voxelValue = 0;
 
-        if (yPos >= terrainHeight - 3 && yPos <= terrainHeight)
-            return 1;
+        if (yPos == terrainHeight)
+            voxelValue = 1;
+        else if (yPos < terrainHeight && yPos > terrainHeight - 4)
+            voxelValue = 1;
         else if (yPos > terrainHeight)
             return 0;
         else
-            return 3;
+            voxelValue = 3;
+
+        /* SECOND PASS */
+
+        if(voxelValue == 3 || voxelValue == 1)
+        {
+            foreach(Lode lode in biome.lodes)
+            {
+                if (yPos > lode.minHeight && yPos < lode.maxHeight)
+                    if (Noise.Get3DPerlin(pos, lode.noiseOffset, lode.scale, lode.threshold))
+                        voxelValue = lode.blockID;
+            }
+        }
+
+        return voxelValue;
     }
 
     void CreateChunk(ChunkCoord coord)
