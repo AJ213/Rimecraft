@@ -21,20 +21,20 @@ MonoBehaviour:
     blockID: 2
     minHeight: 5
     maxHeight: 255
-    scale: 0.15
+    scale: 0.2
     threshold: 0.5
     noiseOffset: 0
   - nodeName: Snow
     blockID: 1
     minHeight: 2
     maxHeight: 255
-    scale: 0.15
+    scale: 0.2
     threshold: 0.5
     noiseOffset: 500
   - nodeName: Air
     blockID: 0
     minHeight: 2
     maxHeight: 255
-    scale: 0.05
+    scale: 0.1
     threshold: 0.5
     noiseOffset: 1000
