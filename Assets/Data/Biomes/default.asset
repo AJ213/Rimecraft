@@ -16,6 +16,12 @@ MonoBehaviour:
   solidGroundHeight: 42
   terrainheight: 42
   terrainScale: 0.25
+  treeZoneScale: 1.3
+  treeZoneThreshold: 0.781
+  treePlacementScale: 18
+  treePlacementThreshold: 0.805
+  maxTreeHeight: 20
+  minTreeHeight: 10
   lodes:
   - nodeName: Ice
     blockID: 2
