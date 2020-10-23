@@ -2155,6 +2155,7 @@ MonoBehaviour:
   player: {fileID: 332412510}
   spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: a2057a62d0e121f43922d28e5ccb4da9, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: cca088c3de9907d43a823f0496b6a4aa, type: 2}
   blockTypes:
   - blockName: Air
     isSolid: 0
