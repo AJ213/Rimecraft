@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 204.49466, g: 243.02702, b: 352.67554, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -979,7 +979,7 @@ MonoBehaviour:
   player: {fileID: 332412509}
   highlight: {fileID: 940450425}
   itemSlots:
-  - itemID: 1
+  - itemID: 6
     icon: {fileID: 3042157282151652754}
   - itemID: 2
     icon: {fileID: 400632100}
@@ -2158,6 +2158,7 @@ MonoBehaviour:
   blockTypes:
   - blockName: Air
     isSolid: 0
+    isTransparent: 1
     icon: {fileID: 21300000, guid: 704fc4c7609481944898a78e4396f6de, type: 3}
     backFaceTexture: 0
     frontFaceTexture: 0
@@ -2167,6 +2168,7 @@ MonoBehaviour:
     rightFaceTexture: 0
   - blockName: Snow
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 21300000, guid: ff465ce0856cb6643a43dc7339c06139, type: 3}
     backFaceTexture: 0
     frontFaceTexture: 0
@@ -2176,6 +2178,7 @@ MonoBehaviour:
     rightFaceTexture: 0
   - blockName: Ice
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 21300000, guid: e1c03646ae3d37047a2bdbed7657f4bd, type: 3}
     backFaceTexture: 1
     frontFaceTexture: 1
@@ -2185,6 +2188,7 @@ MonoBehaviour:
     rightFaceTexture: 1
   - blockName: Stone
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 21300000, guid: d464c09f43ad76a4c9b2eee639fc5be0, type: 3}
     backFaceTexture: 2
     frontFaceTexture: 2
@@ -2194,6 +2198,7 @@ MonoBehaviour:
     rightFaceTexture: 2
   - blockName: Boreal Wood
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 21300000, guid: 704fc4c7609481944898a78e4396f6de, type: 3}
     backFaceTexture: 3
     frontFaceTexture: 3
@@ -2203,6 +2208,7 @@ MonoBehaviour:
     rightFaceTexture: 3
   - blockName: Ore
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 21300000, guid: 704fc4c7609481944898a78e4396f6de, type: 3}
     backFaceTexture: 5
     frontFaceTexture: 5
@@ -2210,6 +2216,16 @@ MonoBehaviour:
     bottomFaceTexture: 5
     leftFaceTexture: 5
     rightFaceTexture: 5
+  - blockName: Boreal Leave
+    isSolid: 1
+    isTransparent: 1
+    icon: {fileID: 21300000, guid: 704fc4c7609481944898a78e4396f6de, type: 3}
+    backFaceTexture: 6
+    frontFaceTexture: 6
+    topFaceTexture: 6
+    bottomFaceTexture: 6
+    leftFaceTexture: 6
+    rightFaceTexture: 6
   debugScreen: {fileID: 2060800638}
 --- !u!4 &1518965556
 Transform:

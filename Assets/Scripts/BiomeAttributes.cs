@@ -11,6 +11,17 @@ public class BiomeAttributes : ScriptableObject
     public int terrainheight;
     public float terrainScale;
 
+    [Header("Trees")]
+    public float treeZoneScale = 1.3f;
+    [Range(0.1f, 1f)]
+    public float treeZoneThreshold = 0.6f;
+    public float treePlacementScale = 15f;
+    [Range(0.1f, 1f)]
+    public float treePlacementThreshold = 0.6f;
+
+    public int maxTreeHeight = 12;
+    public int minTreeHeight = 5;
+
     public Lode[] lodes;
 }
 
