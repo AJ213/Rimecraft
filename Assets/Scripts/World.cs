@@ -65,7 +65,7 @@ public class World : MonoBehaviour
         worldData = SaveSystem.LoadWorld("Prototype");
 
         Random.InitState(VoxelData.seed);
-
+        Camera.main.farClipPlane = Mathf.Sqrt(2) * VoxelData.ChunkWidth * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
         spawnPosition = new Vector3(VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2, VoxelData.ChunkHeight - 50, VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2);
@@ -73,8 +73,11 @@ public class World : MonoBehaviour
         CheckViewDistance();
         playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
 
-        ChunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
-        ChunkUpdateThread.Start();
+        if (settings.enableThreading)
+        {
+            ChunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
+            ChunkUpdateThread.Start();
+        }
     }
 
     private void Update()
@@ -84,6 +87,19 @@ public class World : MonoBehaviour
         if (!playerChunkCoord.Equals(playerLastChunkCoord))
         {
             CheckViewDistance();
+        }
+
+        if (!settings.enableThreading)
+        {
+            if (!applyingModifications)
+            {
+                ApplyModifications();
+            }
+
+            if (chunksToUpdate.Count > 0)
+            {
+                UpdateChunks();
+            }
         }
 
         if (chunksToDraw.Count > 0)
@@ -165,7 +181,10 @@ public class World : MonoBehaviour
 
     private void OnDisable()
     {
-        ChunkUpdateThread.Abort();
+        if (settings.enableThreading)
+        {
+            ChunkUpdateThread.Abort();
+        }
     }
 
     private void ApplyModifications()
@@ -484,6 +503,8 @@ public class Settings
 
     [Header("Performance")]
     public int loadDistance = 16;
+
+    public bool enableThreading = true;
 
     public int viewDistanceInChunks = 8;
 
