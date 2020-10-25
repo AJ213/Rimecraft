@@ -1,23 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class VoxelData
 {
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
-    public static readonly int WorldSizeInChunks = 10;
+    public static readonly int WorldSizeInChunks = 4;
+    public static int seed;
 
     public static int WorldSizeInVoxels
     {
         get { return WorldSizeInChunks * ChunkWidth; }
     }
 
-    public static readonly int ViewDistanceInChunks = 4;
+    public static readonly int TextureAtlasSizeInBlocks = 16;
 
-
-    public static readonly int TextureAtlasSizeInBlocks = 4;
-    public static float NoramlizedBlockTextureSize 
+    public static float NoramlizedBlockTextureSize
     { get { return 1 / (float)TextureAtlasSizeInBlocks; } }
 
     public static readonly Vector3[] voxelVerts = new Vector3[8]
@@ -32,15 +29,17 @@ public static class VoxelData
         new Vector3(0, 1, 1)
     };
 
-    public static readonly Vector3[] faceChecks = new Vector3[6]
+    public static readonly Vector3Int[] faceChecks = new Vector3Int[6]
     {
-        new Vector3(0, 0, -1),
-        new Vector3(0, 0, 1),
-        new Vector3(0, 1, 0),
-        new Vector3(0, -1, 0),
-        new Vector3(-1, 0, 0),
-        new Vector3(1, 0, 0)
+        new Vector3Int(0, 0, -1),
+        new Vector3Int(0, 0, 1),
+        new Vector3Int(0, 1, 0),
+        new Vector3Int(0, -1, 0),
+        new Vector3Int(-1, 0, 0),
+        new Vector3Int(1, 0, 0)
     };
+
+    public static readonly int[] revFaceCheckIndex = new int[6] { 1, 0, 3, 2, 5, 4 };
 
     public static readonly int[,] voxelTris = new int[6, 4]
     {

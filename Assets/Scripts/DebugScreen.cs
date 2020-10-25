@@ -1,23 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Text;
+﻿using System.Text;
 using TMPro;
+using UnityEngine;
 
 public class DebugScreen : MonoBehaviour
 {
-    World world;
-    TextMeshProUGUI text;
+    private World world;
+    private TextMeshProUGUI text;
 
-    float frameRate;
-    float timer;
-    void Start()
+    private float frameRate;
+    private float timer;
+
+    private void Start()
     {
         world = GameObject.Find("World").GetComponent<World>();
+        text = GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         StringBuilder debugText = new StringBuilder("Debug \n");
         debugText.Append(frameRate.ToString());
@@ -37,9 +37,9 @@ public class DebugScreen : MonoBehaviour
         debugText.Append(world.playerChunkCoord.z);
         debugText.AppendLine(")");
 
-        GetComponent<TextMeshProUGUI>().text = debugText.ToString();
+        text.text = debugText.ToString();
 
-        if(timer > 1)
+        if (timer > 1)
         {
             frameRate = (int)(1 / Time.unscaledDeltaTime);
             timer = 0;

@@ -1,26 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "BiomeAttirbutes", menuName = "Rimecraft/Biome Attributes")]
 public class BiomeAttributes : ScriptableObject
 {
+    [Header("Scale")]
     public string biomeName;
 
-    public int solidGroundHeight;
+    public int offset;
+    public float scale;
+
     public int terrainheight;
     public float terrainScale;
 
-    [Header("Trees")]
-    public float treeZoneScale = 1.3f;
-    [Range(0.1f, 1f)]
-    public float treeZoneThreshold = 0.6f;
-    public float treePlacementScale = 15f;
-    [Range(0.1f, 1f)]
-    public float treePlacementThreshold = 0.6f;
+    public ushort surfaceBlock;
+    public ushort subSurfaceBlock;
 
-    public int maxTreeHeight = 12;
-    public int minTreeHeight = 5;
+    [Header("Major Flora")]
+    public float majorFloraZoneScale = 1.3f;
+
+    public int majorFloraIndex;
+
+    [Range(0.1f, 1f)]
+    public float majorFloraZoneThreshold = 0.6f;
+
+    public float majorFloraPlacementScale = 15f;
+
+    [Range(0.1f, 1f)]
+    public float majorFloraPlacementThreshold = 0.6f;
+
+    public bool placeMajorFlora = true;
+    public int maxHeight = 12;
+    public int minHeight = 5;
 
     public Lode[] lodes;
 }
@@ -29,7 +39,7 @@ public class BiomeAttributes : ScriptableObject
 public class Lode
 {
     public string nodeName;
-    public byte blockID;
+    public ushort blockID;
     public int minHeight;
     public int maxHeight;
     public float scale;
