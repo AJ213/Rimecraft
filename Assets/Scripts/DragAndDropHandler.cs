@@ -11,18 +11,15 @@ public class DragAndDropHandler : MonoBehaviour
     [SerializeField] private GraphicRaycaster raycaster = null;
     private PointerEventData pointerEventData;
     [SerializeField] private EventSystem eventSystem = null;
-    private World world;
 
     private void Start()
     {
-        world = GameObject.Find("World").GetComponent<World>();
-
         cursorItemSlot = new ItemSlot(cursorSlot);
     }
 
     private void Update()
     {
-        if (!world.InUI)
+        if (!World.Instance.InUI)
         {
             return;
         }

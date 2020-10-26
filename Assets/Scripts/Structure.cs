@@ -30,8 +30,6 @@ public static class Structure
         {
             queue.Enqueue(new VoxelMod(new Vector3(position.x, position.y + i, position.z), 4));
         }
-
-        queue.Enqueue(new VoxelMod(new Vector3(position.x, position.y + 1, position.z), 6));
         for (int y = 1; y < 3; y++)
         {
             for (int x = -3; x < 3; x++)

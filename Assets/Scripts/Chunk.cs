@@ -37,11 +37,11 @@ public class Chunk
         meshRenderer.materials = materials;
 
         chunkObject.transform.SetParent(World.Instance.transform);
-        chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
-        chunkObject.name = "Chunk " + coord.x + ", " + coord.z;
+        chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, coord.y * VoxelData.ChunkWidth, coord.z * VoxelData.ChunkWidth);
+        chunkObject.name = "Chunk " + coord.x + ", " + coord.y + "," + coord.z;
         position = Vector3Int.FloorToInt(chunkObject.transform.position);
 
-        chunkData = World.Instance.worldData.RequestChunk(new Vector2Int(position.x, position.z), true);
+        chunkData = World.Instance.worldData.RequestChunk(new Vector3Int(position.x, position.y, position.z), true);
         chunkData.chunk = this;
 
         World.Instance.AddChunkToUpdate(this);
@@ -51,7 +51,7 @@ public class Chunk
     {
         ClearMeshData();
 
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < VoxelData.ChunkWidth; y++)
         {
             for (int x = 0; x < VoxelData.ChunkWidth; x++)
             {
@@ -74,6 +74,7 @@ public class Chunk
         int zCheck = Mathf.FloorToInt(pos.z);
 
         xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
+        yCheck -= Mathf.FloorToInt(chunkObject.transform.position.y);
         zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
 
         chunkData.ModifyVoxel(new Vector3Int(xCheck, yCheck, zCheck), newID);
@@ -196,24 +197,28 @@ public class Chunk
 public class ChunkCoord
 {
     public int x;
+    public int y;
     public int z;
 
     public ChunkCoord()
     {
         x = 0;
+        y = 0;
         z = 0;
     }
 
-    public ChunkCoord(int x, int z)
+    public ChunkCoord(int x, int y, int z)
     {
         this.x = x;
+        this.y = y;
         this.z = z;
     }
 
     public ChunkCoord(Vector3Int pos)
     {
         x = pos.x / VoxelData.ChunkWidth;
-        z = pos.y / VoxelData.ChunkWidth;
+        y = pos.y / VoxelData.ChunkWidth;
+        z = pos.z / VoxelData.ChunkWidth;
     }
 
     public bool Equals(ChunkCoord other)
@@ -223,7 +228,7 @@ public class ChunkCoord
             return false;
         }
 
-        if (other.x != x || other.z != z)
+        if (other.x != x || other.y != y || other.z != z)
         {
             return false;
         }

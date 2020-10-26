@@ -24,14 +24,13 @@ public class Player : MonoBehaviour
     private Vector3 velocity;
     private float vertical;
     private float verticalMomentum = 0;
-    private World world;
 
     public bool Back
     {
         get
         {
             Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z - playerWidth));
-            return world.CheckForVoxel(position) || world.CheckForVoxel(position + Vector3Int.up);
+            return World.Instance.CheckForVoxel(position) || World.Instance.CheckForVoxel(position + Vector3Int.up);
         }
     }
 
@@ -40,7 +39,7 @@ public class Player : MonoBehaviour
         get
         {
             Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z + playerWidth));
-            return world.CheckForVoxel(position) || world.CheckForVoxel(position + Vector3Int.up);
+            return World.Instance.CheckForVoxel(position) || World.Instance.CheckForVoxel(position + Vector3Int.up);
         }
     }
 
@@ -49,7 +48,7 @@ public class Player : MonoBehaviour
         get
         {
             Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x - playerWidth), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
-            return world.CheckForVoxel(position) || world.CheckForVoxel(position + Vector3Int.up);
+            return World.Instance.CheckForVoxel(position) || World.Instance.CheckForVoxel(position + Vector3Int.up);
         }
     }
 
@@ -58,7 +57,7 @@ public class Player : MonoBehaviour
         get
         {
             Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x + playerWidth), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
-            return world.CheckForVoxel(position) || world.CheckForVoxel(position + Vector3Int.up);
+            return World.Instance.CheckForVoxel(position) || World.Instance.CheckForVoxel(position + Vector3Int.up);
         }
     }
 
@@ -105,10 +104,10 @@ public class Player : MonoBehaviour
 
     private float CheckDownSpeed(float downSpeed)
     {
-        if (world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)))
+        if (World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
+            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
+            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)) ||
+            World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)))
         {
             isGrounded = true;
             return 0;
@@ -122,10 +121,10 @@ public class Player : MonoBehaviour
 
     private float CheckUpSpeed(float upSpeed)
     {
-        if (world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)))
+        if (World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
+            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
+            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)) ||
+            World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)))
         {
             isGrounded = true;
             return 0;
@@ -139,7 +138,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!world.InUI)
+        if (!World.Instance.InUI)
         {
             CalculateVelocity();
             if (jumpRequest)
@@ -147,8 +146,8 @@ public class Player : MonoBehaviour
                 Jump();
             }
 
-            transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity);
-            cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity);
+            transform.Rotate(Vector3.up * mouseHorizontal * World.Instance.settings.mouseSensitivity);
+            cam.Rotate(Vector3.right * -mouseVertical * World.Instance.settings.mouseSensitivity);
 
             transform.Translate(velocity, Space.World);
         }
@@ -185,7 +184,7 @@ public class Player : MonoBehaviour
             // Destroy Block
             if (Input.GetMouseButtonDown(0))
             {
-                world.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+                World.Instance.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
             }
 
             // Build Block
@@ -193,7 +192,7 @@ public class Player : MonoBehaviour
             {
                 if (toolbar.slots[toolbar.slotIndex].HasItem)
                 {
-                    world.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
+                    World.Instance.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
                     toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
                 }
             }
@@ -216,7 +215,7 @@ public class Player : MonoBehaviour
         {
             Vector3 pos = cam.position + (cam.forward * step);
 
-            if (world.CheckForVoxel(pos))
+            if (World.Instance.CheckForVoxel(pos))
             {
                 highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
                 placeBlock.position = lastPos;
@@ -239,18 +238,17 @@ public class Player : MonoBehaviour
     private void Start()
     {
         cam = Camera.main.transform;
-        world = GameObject.Find("World").GetComponent<World>();
-        world.InUI = false;
+        World.Instance.InUI = false;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            world.InUI = !world.InUI;
+            World.Instance.InUI = !World.Instance.InUI;
         }
 
-        if (!world.InUI)
+        if (!World.Instance.InUI)
         {
             GetPlayerInputs();
             PlaceCursorBlock();

@@ -91,7 +91,7 @@ public class AtlasPacker : EditorWindow
     private void PackAtlas()
     {
         atlas = new Texture2D(atlasSize, atlasSize);
-        Color[] pixels = new Color[atlasSize * atlasSize];
+        Color32[] pixels = new Color32[atlasSize * atlasSize];
         for (int x = 0; x < atlasSize; x++)
         {
             for (int y = 0; y < atlasSize; y++)
@@ -117,7 +117,7 @@ public class AtlasPacker : EditorWindow
             }
         }
 
-        atlas.SetPixels(pixels);
+        atlas.SetPixels32(pixels);
         atlas.Apply();
     }
 }

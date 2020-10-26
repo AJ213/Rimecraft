@@ -83,9 +83,9 @@ public static class SaveSystem
         stream.Close();
     }
 
-    public static ChunkData LoadChunk(string worldName, Vector2Int position)
+    public static ChunkData LoadChunk(string worldName, Vector3Int position)
     {
-        string chunkName = position.x + "-" + position.y;
+        string chunkName = position.x + "-" + position.y + "-" + position.z;
 
         string loadPath = World.Instance.appPath + "/saves/" + worldName + "/chunks/" + chunkName + ".chunk";
 

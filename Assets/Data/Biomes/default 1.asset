@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   biomeName: default 1
   offset: 0
-  scale: 0
+  scale: 1
   terrainheight: 42
   terrainScale: 0.25
   surfaceBlock: 2

@@ -7,42 +7,45 @@ public class ChunkData
 {
     private int x;
     private int y;
+    private int z;
 
-    public Vector2Int Position
+    public Vector3Int Position
     {
-        get { return new Vector2Int(x, y); }
+        get { return new Vector3Int(x, y, z); }
         set
         {
             x = value.x;
             y = value.y;
+            z = value.z;
         }
     }
 
-    public ChunkData(Vector2Int pos)
+    public ChunkData(Vector3Int pos)
     {
         Position = pos;
     }
 
-    public ChunkData(int x, int y)
+    public ChunkData(int x, int y, int z)
     {
         this.x = x;
         this.y = y;
+        this.z = z;
     }
 
     [System.NonSerialized] public Chunk chunk;
 
     [HideInInspector]
-    public VoxelState[,,] map = new VoxelState[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    public VoxelState[,,] map = new VoxelState[VoxelData.ChunkWidth, VoxelData.ChunkWidth, VoxelData.ChunkWidth];
 
     public void Populate()
     {
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = 0; y < VoxelData.ChunkWidth; y++)
         {
             for (int x = 0; x < VoxelData.ChunkWidth; x++)
             {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
-                    Vector3 voxelGlobalPosition = new Vector3(x + Position.x, y, z + Position.y);
+                    Vector3 voxelGlobalPosition = new Vector3(x + Position.x, y + Position.y, z + Position.y);
                     map[x, y, z] = new VoxelState(World.Instance.GetVoxel(voxelGlobalPosition), this, new Vector3Int(x, y, z));
 
                     for (int p = 0; p < 6; p++)
@@ -84,7 +87,7 @@ public class ChunkData
 
     public bool IsVoxelInChunk(int x, int y, int z)
     {
-        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
+        if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkWidth - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
         {
             return false;
         }

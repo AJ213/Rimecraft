@@ -16,7 +16,7 @@ public class World : MonoBehaviour
     public Material transparentMaterial = null;
     public BlockType[] blockTypes = null;
 
-    private Chunk[,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
+    private Chunk[,,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
 
     private List<ChunkCoord> activeChunks = new List<ChunkCoord>();
     public ChunkCoord playerChunkCoord;
@@ -68,9 +68,11 @@ public class World : MonoBehaviour
         Camera.main.farClipPlane = Mathf.Sqrt(2) * VoxelData.ChunkWidth * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
-        spawnPosition = new Vector3(VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2, VoxelData.ChunkHeight - 50, VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2);
+        spawnPosition = new Vector3(VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2, VoxelData.WorldSizeInVoxels - 300, VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2);
         player.position = spawnPosition;
+        CheckLoadDistance();
         CheckViewDistance();
+
         playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
 
         if (settings.enableThreading)
@@ -86,6 +88,7 @@ public class World : MonoBehaviour
 
         if (!playerChunkCoord.Equals(playerLastChunkCoord))
         {
+            CheckLoadDistance();
             CheckViewDistance();
         }
 
@@ -117,9 +120,12 @@ public class World : MonoBehaviour
     {
         for (int x = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; x < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; x++)
         {
-            for (int z = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; z < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; z++)
+            for (int y = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; y < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; y++)
             {
-                worldData.LoadChunk(new Vector2Int(x, z));
+                for (int z = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; z < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; z++)
+                {
+                    worldData.LoadChunk(new Vector3Int(x, y, z));
+                }
             }
         }
     }
@@ -208,15 +214,17 @@ public class World : MonoBehaviour
     private ChunkCoord GetChunkCoordFromVector3(Vector3 pos)
     {
         int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
+        int y = Mathf.FloorToInt(pos.y / VoxelData.ChunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
-        return new ChunkCoord(x, z);
+        return new ChunkCoord(x, y, z);
     }
 
     public Chunk GetChunkFromVector3(Vector3 pos)
     {
         int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
+        int y = Mathf.FloorToInt(pos.y / VoxelData.ChunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
-        return chunks[x, z];
+        return chunks[x, y, z];
     }
 
     private void CheckViewDistance()
@@ -231,29 +239,32 @@ public class World : MonoBehaviour
         // Loop through all chunks currently within view distance of the player.
         for (int x = coord.x - settings.viewDistanceInChunks; x < coord.x + settings.viewDistanceInChunks; x++)
         {
-            for (int z = coord.z - settings.viewDistanceInChunks; z < coord.z + settings.viewDistanceInChunks; z++)
+            for (int y = coord.y - settings.viewDistanceInChunks; y < coord.y + settings.viewDistanceInChunks; y++)
             {
-                ChunkCoord thisChunkCoord = new ChunkCoord(x, z);
-
-                // If the current chunk is in the world...
-                if (IsChunkInWorld(thisChunkCoord))
+                for (int z = coord.z - settings.viewDistanceInChunks; z < coord.z + settings.viewDistanceInChunks; z++)
                 {
-                    // Check if it active, if not, activate it.
-                    if (chunks[x, z] == null)
+                    ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
+
+                    // If the current chunk is in the world...
+                    if (IsChunkInWorld(thisChunkCoord))
                     {
-                        chunks[x, z] = new Chunk(thisChunkCoord);
+                        // Check if it active, if not, activate it.
+                        if (chunks[x, y, z] == null)
+                        {
+                            chunks[x, y, z] = new Chunk(thisChunkCoord);
+                        }
+
+                        chunks[x, y, z].IsActive = true;
+                        activeChunks.Add(thisChunkCoord);
                     }
 
-                    chunks[x, z].IsActive = true;
-                    activeChunks.Add(thisChunkCoord);
-                }
-
-                // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
-                for (int i = 0; i < previouslyActiveChunks.Count; i++)
-                {
-                    if (previouslyActiveChunks[i].Equals(thisChunkCoord))
+                    // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
+                    for (int i = 0; i < previouslyActiveChunks.Count; i++)
                     {
-                        previouslyActiveChunks.RemoveAt(i);
+                        if (previouslyActiveChunks[i].Equals(thisChunkCoord))
+                        {
+                            previouslyActiveChunks.RemoveAt(i);
+                        }
                     }
                 }
             }
@@ -262,7 +273,57 @@ public class World : MonoBehaviour
         // Any chunks left in the previousActiveChunks list are no longer in the player's view distance, so loop through and disable them.
         foreach (ChunkCoord c in previouslyActiveChunks)
         {
-            chunks[c.x, c.z].IsActive = false;
+            chunks[c.x, c.y, c.z].IsActive = false;
+        }
+    }
+
+    private void CheckLoadDistance()
+    {
+        ChunkCoord coord = GetChunkCoordFromVector3(player.position);
+        playerLastChunkCoord = playerChunkCoord;
+
+        List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);
+
+        activeChunks.Clear();
+
+        // Loop through all chunks currently within view distance of the player.
+        for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
+        {
+            for (int y = coord.y - settings.viewDistanceInChunks; y < coord.y + settings.viewDistanceInChunks; y++)
+            {
+                for (int z = coord.z - settings.loadDistance; z < coord.z + settings.loadDistance; z++)
+                {
+                    ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
+
+                    // If the current chunk is in the world...
+                    if (IsChunkInWorld(thisChunkCoord))
+                    {
+                        // Check if it active, if not, activate it.
+                        if (chunks[x, y, z] == null)
+                        {
+                            chunks[x, y, z] = new Chunk(thisChunkCoord);
+                        }
+
+                        chunks[x, y, z].IsActive = true;
+                        activeChunks.Add(thisChunkCoord);
+                    }
+
+                    // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
+                    for (int i = 0; i < previouslyActiveChunks.Count; i++)
+                    {
+                        if (previouslyActiveChunks[i].Equals(thisChunkCoord))
+                        {
+                            previouslyActiveChunks.RemoveAt(i);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Any chunks left in the previousActiveChunks list are no longer in the player's view distance, so loop through and disable them.
+        foreach (ChunkCoord c in previouslyActiveChunks)
+        {
+            chunks[c.x, c.y, c.z].IsActive = false;
         }
     }
 
@@ -322,7 +383,7 @@ public class World : MonoBehaviour
 
         /* BIOME SELECTION PASS */
 
-        int solidGroundHeight = 42;
+        int solidGroundHeight = VoxelData.WorldSizeInVoxels - 310;
         float sumOfHeights = 0;
         int count = 0;
         float strongestWeight = 0;
@@ -410,14 +471,14 @@ public class World : MonoBehaviour
         return voxelValue;
     }
 
-    private bool IsChunkInWorld(ChunkCoord coord)
+    public bool IsChunkInWorld(ChunkCoord coord)
     {
-        return (coord.x > 0 && coord.x < VoxelData.WorldSizeInChunks - 1 && coord.z > 0 && coord.z < VoxelData.WorldSizeInChunks - 1);
+        return (coord.x > 0 && coord.x < VoxelData.WorldSizeInChunks - 1 && coord.y > 0 && coord.y < VoxelData.WorldSizeInChunks - 1 && coord.z > 0 && coord.z < VoxelData.WorldSizeInChunks - 1);
     }
 
-    private bool IsVoxelInWorld(Vector3 pos)
+    public bool IsVoxelInWorld(Vector3 pos)
     {
-        if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.ChunkHeight && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels)
+        if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.WorldSizeInVoxels && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels)
         {
             return true;
         }

@@ -8,7 +8,7 @@ public class WorldData
     public int seed;
 
     [System.NonSerialized]
-    public Dictionary<Vector2Int, ChunkData> chunks = new Dictionary<Vector2Int, ChunkData>();
+    public Dictionary<Vector3Int, ChunkData> chunks = new Dictionary<Vector3Int, ChunkData>();
 
     [System.NonSerialized]
     public List<ChunkData> modifiedChunks = new List<ChunkData>();
@@ -33,7 +33,7 @@ public class WorldData
         seed = worldData.seed;
     }
 
-    public ChunkData RequestChunk(Vector2Int coord, bool create)
+    public ChunkData RequestChunk(Vector3Int coord, bool create)
     {
         ChunkData c;
 
@@ -57,7 +57,7 @@ public class WorldData
         return c;
     }
 
-    public void LoadChunk(Vector2Int coord)
+    public void LoadChunk(Vector3Int coord)
     {
         if (chunks.ContainsKey(coord))
         {
@@ -77,7 +77,7 @@ public class WorldData
 
     private bool IsVoxelInWorld(Vector3 pos)
     {
-        if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.ChunkHeight && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels)
+        if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.WorldSizeInVoxels && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels)
         {
             return true;
         }
@@ -95,14 +95,16 @@ public class WorldData
         }
 
         int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
+        int y = Mathf.FloorToInt(pos.y / VoxelData.ChunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
 
         x *= VoxelData.ChunkWidth;
+        y *= VoxelData.ChunkWidth;
         z *= VoxelData.ChunkWidth;
 
-        ChunkData chunk = RequestChunk(new Vector2Int(x, z), true);
+        ChunkData chunk = RequestChunk(new Vector3Int(x, y, z), true);
 
-        Vector3Int voxel = new Vector3Int((int)(pos.x - x), (int)pos.y, (int)(pos.z - z));
+        Vector3Int voxel = new Vector3Int((int)(pos.x - x), (int)(pos.y - y), (int)(pos.z - z));
 
         chunk.ModifyVoxel(voxel, value);
     }
@@ -115,19 +117,21 @@ public class WorldData
         }
 
         int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
+        int y = Mathf.FloorToInt(pos.y / VoxelData.ChunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
 
         x *= VoxelData.ChunkWidth;
+        y *= VoxelData.ChunkWidth;
         z *= VoxelData.ChunkWidth;
 
-        ChunkData chunk = RequestChunk(new Vector2Int(x, z), false);
+        ChunkData chunk = RequestChunk(new Vector3Int(x, y, z), false);
 
         if (chunk == null)
         {
             return null;
         }
 
-        Vector3Int voxel = new Vector3Int((int)(pos.x - x), (int)pos.y, (int)(pos.z - z));
+        Vector3Int voxel = new Vector3Int((int)(pos.x - x), (int)(pos.y - y), (int)(pos.z - z));
         try
         {
             return chunk.map[voxel.x, voxel.y, voxel.z];
