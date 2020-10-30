@@ -9,7 +9,7 @@ public class BiomeAttributes : ScriptableObject
     public int offset;
     public float scale;
 
-    public int terrainheight;
+    public int terrainHeight;
     public float terrainScale;
 
     public ushort surfaceBlock;

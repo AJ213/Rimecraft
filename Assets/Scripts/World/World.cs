@@ -6,7 +6,6 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     public Settings settings;
-
     public BiomeAttributes[] biomes;
 
     public Transform player;
@@ -68,9 +67,9 @@ public class World : MonoBehaviour
         Camera.main.farClipPlane = Mathf.Sqrt(2) * VoxelData.ChunkWidth * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
-        spawnPosition = new Vector3(VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2, VoxelData.WorldSizeInVoxels - 300, VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth / 2);
+        spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.WorldSizeInVoxels, VoxelData.WorldSizeInVoxels / 2);
         player.position = spawnPosition;
-        CheckLoadDistance();
+        //CheckLoadDistance();
         CheckViewDistance();
 
         playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
@@ -88,7 +87,7 @@ public class World : MonoBehaviour
 
         if (!playerChunkCoord.Equals(playerLastChunkCoord))
         {
-            CheckLoadDistance();
+            //CheckLoadDistance();
             CheckViewDistance();
         }
 
@@ -224,7 +223,15 @@ public class World : MonoBehaviour
         int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
         int y = Mathf.FloorToInt(pos.y / VoxelData.ChunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
-        return chunks[x, y, z];
+        try
+        {
+            return chunks[x, y, z];
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(pos.x + ", " + pos.y + ", " + pos.z + "| due to " + x + ", " + y + ", " + z);
+            throw e;
+        }
     }
 
     private void CheckViewDistance()
@@ -330,6 +337,10 @@ public class World : MonoBehaviour
     public bool CheckForVoxel(Vector3 pos)
     {
         VoxelState voxel = worldData.GetVoxel(pos);
+        if (voxel == null)
+        {
+            return false;
+        }
 
         if (blockTypes[voxel.id].isSolid)
         {
@@ -383,7 +394,7 @@ public class World : MonoBehaviour
 
         /* BIOME SELECTION PASS */
 
-        int solidGroundHeight = VoxelData.WorldSizeInVoxels - 310;
+        int solidGroundHeight = VoxelData.WorldSizeInVoxels - 150;
         float sumOfHeights = 0;
         int count = 0;
         float strongestWeight = 0;
@@ -393,17 +404,17 @@ public class World : MonoBehaviour
         {
             float weight = Noise.Get2DPerlin(new Vector2(pos.x, pos.z), biomes[i].offset, biomes[i].scale);
 
-            // keeps track of the strongest weight
+            // Keep track of which weight is strongest.
             if (weight > strongestWeight)
             {
                 strongestWeight = weight;
                 strongestBiomeIndex = i;
             }
 
-            // Get height of terrain and multiply it by its weight
-            float height = biomes[i].terrainheight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, biomes[i].terrainScale) * weight;
+            // Get the height of the terrain (for the current biome) and multiply it by its weight.
+            float height = biomes[i].terrainHeight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, biomes[i].terrainScale) * weight;
 
-            // if height value is greater 0 add it to sum
+            // If the height value is greater 0 add it to the sum of heights.
             if (height > 0)
             {
                 sumOfHeights += height;
@@ -414,8 +425,9 @@ public class World : MonoBehaviour
         // Set biome to the one with the strongest weight.
         BiomeAttributes biome = biomes[strongestBiomeIndex];
 
-        // Get the average of heights
+        // Get the average of the heights.
         sumOfHeights /= count;
+
         int terrainHeight = Mathf.FloorToInt(sumOfHeights + solidGroundHeight);
 
         /* BASIC TERRAIN PASS */
@@ -447,7 +459,7 @@ public class World : MonoBehaviour
             {
                 if (pos.y > lode.minHeight && pos.y < lode.maxHeight)
                 {
-                    if (Noise.Get3DPerlin(pos, lode.noiseOffset, lode.scale, lode.threshold))
+                    if (Noise.Get3DPerlin(pos, lode.noiseOffset, lode.scale) > lode.threshold)
                     {
                         voxelValue = lode.blockID;
                     }
@@ -473,7 +485,7 @@ public class World : MonoBehaviour
 
     public bool IsChunkInWorld(ChunkCoord coord)
     {
-        return (coord.x > 0 && coord.x < VoxelData.WorldSizeInChunks - 1 && coord.y > 0 && coord.y < VoxelData.WorldSizeInChunks - 1 && coord.z > 0 && coord.z < VoxelData.WorldSizeInChunks - 1);
+        return (coord.x >= 0 && coord.x < VoxelData.WorldSizeInChunks && coord.y >= 0 && coord.y < VoxelData.WorldSizeInChunks && coord.z >= 0 && coord.z < VoxelData.WorldSizeInChunks);
     }
 
     public bool IsVoxelInWorld(Vector3 pos)

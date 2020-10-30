@@ -68,7 +68,7 @@ public static class SaveSystem
 
     public static void SaveChunk(ChunkData chunk, string worldName)
     {
-        string chunkName = chunk.Position.x + "-" + chunk.Position.y;
+        string chunkName = chunk.Position.x + "-" + chunk.Position.y + "-" + chunk.Position.z;
 
         string savePath = World.Instance.appPath + "/save/" + worldName + "/chunks/";
         if (!Directory.Exists(savePath))

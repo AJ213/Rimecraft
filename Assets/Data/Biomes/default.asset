@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: default
   m_EditorClassIdentifier: 
   biomeName: default
-  offset: 0
+  offset: 22
   scale: 1
-  terrainheight: 42
+  terrainHeight: 50
   terrainScale: 0.25
   surfaceBlock: 1
   subSurfaceBlock: 1
@@ -42,10 +42,3 @@ MonoBehaviour:
     scale: 0.2
     threshold: 0.5
     noiseOffset: 500
-  - nodeName: Caves
-    blockID: 0
-    minHeight: 5
-    maxHeight: 400
-    scale: 0.1
-    threshold: 0.55
-    noiseOffset: 1000

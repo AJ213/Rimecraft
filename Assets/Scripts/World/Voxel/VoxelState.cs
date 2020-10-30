@@ -20,7 +20,7 @@ public class VoxelState
 
     public Vector3Int GlobalPosition
     {
-        get { return new Vector3Int(position.x + chunkData.Position.x, position.y, position.z + chunkData.Position.y); }
+        get { return new Vector3Int(position.x + chunkData.Position.x, position.y + chunkData.Position.y, position.z + chunkData.Position.z); }
     }
 
     public BlockType Properties

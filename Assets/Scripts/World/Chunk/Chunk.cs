@@ -87,18 +87,18 @@ public class Chunk
         Vector3Int thisVoxel = new Vector3Int(x, y, z);
         for (int p = 0; p < 6; p++)
         {
-            Vector3Int currentVoxel = thisVoxel + Vector3Int.FloorToInt(VoxelData.faceChecks[p]);
+            Vector3 currentVoxel = thisVoxel + VoxelData.faceChecks[p];
 
-            if (!chunkData.IsVoxelInChunk(currentVoxel.x, currentVoxel.y, currentVoxel.z))
+            if (chunkData.IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                World.Instance.AddChunkToUpdate(World.Instance.GetChunkFromVector3(currentVoxel + position));
+                World.Instance.AddChunkToUpdate(World.Instance.GetChunkFromVector3(currentVoxel + position), true);
             }
         }
     }
 
     public VoxelState GetVoxelFromGlobalVector3(Vector3Int pos)
     {
-        return chunkData.map[pos.x - position.x, pos.y, pos.z - position.z];
+        return chunkData.map[pos.x - position.x, pos.y - position.y, pos.z - position.z];
     }
 
     private void UpdateMeshData(Vector3Int pos)
