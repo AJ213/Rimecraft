@@ -67,7 +67,7 @@ public class World : MonoBehaviour
         Camera.main.farClipPlane = Mathf.Sqrt(2) * VoxelData.ChunkWidth * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
-        spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.WorldSizeInVoxels, VoxelData.WorldSizeInVoxels / 2);
+        spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.WorldSizeInVoxels - 150, VoxelData.WorldSizeInVoxels / 2);
         player.position = spawnPosition;
         //CheckLoadDistance();
         CheckViewDistance();
@@ -412,7 +412,7 @@ public class World : MonoBehaviour
             }
 
             // Get the height of the terrain (for the current biome) and multiply it by its weight.
-            float height = biomes[i].terrainHeight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, biomes[i].terrainScale) * weight;
+            float height = biomes[i].terrainHeight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 2 * biomes[i].offset, biomes[i].terrainScale) * weight;
 
             // If the height value is greater 0 add it to the sum of heights.
             if (height > 0)
@@ -426,10 +426,13 @@ public class World : MonoBehaviour
         BiomeAttributes biome = biomes[strongestBiomeIndex];
 
         // Get the average of the heights.
+        if (count == 0)
+        {
+            count = 1;
+        }
         sumOfHeights /= count;
 
         int terrainHeight = Mathf.FloorToInt(sumOfHeights + solidGroundHeight);
-
         /* BASIC TERRAIN PASS */
 
         ushort voxelValue;
