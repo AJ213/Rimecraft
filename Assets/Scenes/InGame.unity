@@ -236,6 +236,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: -5117700066308340382, guid: cb389551e2ff72743ab5f79e047154bf, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: cb389551e2ff72743ab5f79e047154bf, type: 3}
       propertyPath: m_Name
       value: MineToolDraft4Unwrap2
