@@ -104,10 +104,10 @@ public class Player : MonoBehaviour
 
     private float CheckDownSpeed(float downSpeed)
     {
-        if (World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)) ||
-            World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)))
+        if (World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth))) ||
+            World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth))) ||
+            World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth))) ||
+            World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth))))
         {
             isGrounded = true;
             return 0;
@@ -121,10 +121,10 @@ public class Player : MonoBehaviour
 
     private float CheckUpSpeed(float upSpeed)
     {
-        if (World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            World.Instance.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)) ||
-            World.Instance.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)))
+        if (World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth))) ||
+            World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth))) ||
+            World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth))) ||
+            World.Instance.CheckForVoxel(Vector3Int.FloorToInt(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth))))
         {
             isGrounded = true;
             return 0;
@@ -215,7 +215,7 @@ public class Player : MonoBehaviour
         {
             Vector3 pos = cam.position + (cam.forward * step);
 
-            if (World.Instance.CheckForVoxel(pos))
+            if (World.Instance.CheckForVoxel(Vector3Int.FloorToInt(pos)))
             {
                 highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
                 placeBlock.position = lastPos;

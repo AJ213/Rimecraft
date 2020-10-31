@@ -29,6 +29,11 @@ public class ChunkCoord
         z = pos.z / VoxelData.ChunkWidth;
     }
 
+    public Vector3Int ToVector3Int()
+    {
+        return new Vector3Int(x, y, z);
+    }
+
     public bool Equals(ChunkCoord other)
     {
         if (other == null)

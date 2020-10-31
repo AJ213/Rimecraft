@@ -87,9 +87,9 @@ public class Chunk
         Vector3Int thisVoxel = new Vector3Int(x, y, z);
         for (int p = 0; p < 6; p++)
         {
-            Vector3 currentVoxel = thisVoxel + VoxelData.faceChecks[p];
+            Vector3Int currentVoxel = thisVoxel + Vector3Int.FloorToInt(VoxelData.faceChecks[p]);
 
-            if (chunkData.IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
+            if (World.IsInRange(currentVoxel, VoxelData.ChunkWidth))
             {
                 World.Instance.AddChunkToUpdate(World.Instance.GetChunkFromVector3(currentVoxel + position), true);
             }

@@ -67,7 +67,7 @@ public class World : MonoBehaviour
         Camera.main.farClipPlane = Mathf.Sqrt(2) * VoxelData.ChunkWidth * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
-        spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.WorldSizeInVoxels - 150, VoxelData.WorldSizeInVoxels / 2);
+        spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.WorldSizeInVoxels - 100, VoxelData.WorldSizeInVoxels / 2);
         player.position = spawnPosition;
         //CheckLoadDistance();
         CheckViewDistance();
@@ -253,7 +253,7 @@ public class World : MonoBehaviour
                     ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
 
                     // If the current chunk is in the world...
-                    if (IsChunkInWorld(thisChunkCoord))
+                    if (IsInRange(thisChunkCoord.ToVector3Int(), VoxelData.WorldSizeInChunks))
                     {
                         // Check if it active, if not, activate it.
                         if (chunks[x, y, z] == null)
@@ -303,7 +303,7 @@ public class World : MonoBehaviour
                     ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
 
                     // If the current chunk is in the world...
-                    if (IsChunkInWorld(thisChunkCoord))
+                    if (IsInRange(thisChunkCoord.ToVector3Int(), VoxelData.WorldSizeInChunks))
                     {
                         // Check if it active, if not, activate it.
                         if (chunks[x, y, z] == null)
@@ -334,7 +334,7 @@ public class World : MonoBehaviour
         }
     }
 
-    public bool CheckForVoxel(Vector3 pos)
+    public bool CheckForVoxel(Vector3Int pos)
     {
         VoxelState voxel = worldData.GetVoxel(pos);
         if (voxel == null)
@@ -352,7 +352,7 @@ public class World : MonoBehaviour
         }
     }
 
-    public VoxelState GetVoxelState(Vector3 pos)
+    public VoxelState GetVoxelState(Vector3Int pos)
     {
         return worldData.GetVoxel(pos);
     }
@@ -433,12 +433,11 @@ public class World : MonoBehaviour
         sumOfHeights /= count;
 
         int terrainHeight = Mathf.FloorToInt(sumOfHeights + solidGroundHeight);
-
         ushort voxelValue = 0;
 
         SurfaceBlocks(ref voxelValue, pos, biome, terrainHeight);
         LodeGeneration(ref voxelValue, pos, biome);
-        FloraGeneration(ref voxelValue, pos, biome, terrainHeight);
+        FloraGeneration(pos, biome, terrainHeight);
 
         return voxelValue;
     }
@@ -480,7 +479,7 @@ public class World : MonoBehaviour
         }
     }
 
-    private void FloraGeneration(ref ushort voxelValue, Vector3Int pos, BiomeAttributes biome, int terrainHeight)
+    private void FloraGeneration(Vector3Int pos, BiomeAttributes biome, int terrainHeight)
     {
         if (pos.y == terrainHeight && biome.placeMajorFlora)
         {
@@ -494,30 +493,13 @@ public class World : MonoBehaviour
         }
     }
 
-    public bool IsChunkInWorld(ChunkCoord coord)
-    {
-        return (coord.x >= 0 && coord.x < VoxelData.WorldSizeInChunks && coord.y >= 0 && coord.y < VoxelData.WorldSizeInChunks && coord.z >= 0 && coord.z < VoxelData.WorldSizeInChunks);
-    }
-
-    public bool IsInRange(int value, int length)
+    public static bool IsInRange(int value, int length)
     {
         return (value >= 0 && value < length);
     }
 
-    public bool IsInRange(Vector3Int value, int length)
+    public static bool IsInRange(Vector3Int value, int length)
     {
         return (IsInRange(value.x, length) && IsInRange(value.y, length) && IsInRange(value.z, length));
-    }
-
-    public bool IsVoxelInWorld(Vector3 pos)
-    {
-        if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.WorldSizeInVoxels && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 }

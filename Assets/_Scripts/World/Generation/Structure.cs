@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class Structure
 {
-    public static Queue<VoxelMod> GenerateMajorFlora(int index, Vector3 position, int minTrunkHeight, int maxTrunkHeight)
+    public static Queue<VoxelMod> GenerateMajorFlora(int index, Vector3Int position, int minTrunkHeight, int maxTrunkHeight)
     {
         switch (index)
         {
@@ -15,7 +15,7 @@ public static class Structure
         }
     }
 
-    public static Queue<VoxelMod> MakeTree(Vector3 position, int minTrunkHeight, int maxTrunkHeight)
+    public static Queue<VoxelMod> MakeTree(Vector3Int position, int minTrunkHeight, int maxTrunkHeight)
     {
         Queue<VoxelMod> queue = new Queue<VoxelMod>();
 
@@ -28,7 +28,7 @@ public static class Structure
 
         for (int i = 1; i < height; i++)
         {
-            queue.Enqueue(new VoxelMod(new Vector3(position.x, position.y + i, position.z), 4));
+            queue.Enqueue(new VoxelMod(new Vector3Int(position.x, position.y + i, position.z), 4));
         }
         for (int y = 1; y < 3; y++)
         {
@@ -36,7 +36,7 @@ public static class Structure
             {
                 for (int z = -y; z < 3; z++)
                 {
-                    queue.Enqueue(new VoxelMod(new Vector3(position.x + x, position.y + height - y, position.z + z), 6));
+                    queue.Enqueue(new VoxelMod(new Vector3Int(position.x + x, position.y + height - y, position.z + z), 6));
                 }
             }
         }
