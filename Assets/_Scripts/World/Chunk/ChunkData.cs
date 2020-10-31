@@ -45,7 +45,7 @@ public class ChunkData
             {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
-                    Vector3 voxelGlobalPosition = new Vector3(x + Position.x, y + Position.y, z + Position.z);
+                    Vector3Int voxelGlobalPosition = new Vector3Int(x + Position.x, y + Position.y, z + Position.z);
                     map[x, y, z] = new VoxelState(World.Instance.GetVoxel(voxelGlobalPosition), this, new Vector3Int(x, y, z));
 
                     for (int p = 0; p < 6; p++)

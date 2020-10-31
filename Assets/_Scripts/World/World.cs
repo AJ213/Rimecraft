@@ -376,12 +376,12 @@ public class World : MonoBehaviour
         }
     }
 
-    public ushort GetVoxel(Vector3 pos)
+    public ushort GetVoxel(Vector3Int pos)
     {
         /* IMMUTABLE PASS */
 
         // If outside word, return air.
-        if (!IsVoxelInWorld(pos))
+        if (!IsInRange(pos, VoxelData.WorldSizeInVoxels))
         {
             return 0;
         }
@@ -433,10 +433,18 @@ public class World : MonoBehaviour
         sumOfHeights /= count;
 
         int terrainHeight = Mathf.FloorToInt(sumOfHeights + solidGroundHeight);
-        /* BASIC TERRAIN PASS */
 
-        ushort voxelValue;
+        ushort voxelValue = 0;
 
+        SurfaceBlocks(ref voxelValue, pos, biome, terrainHeight);
+        LodeGeneration(ref voxelValue, pos, biome);
+        FloraGeneration(ref voxelValue, pos, biome, terrainHeight);
+
+        return voxelValue;
+    }
+
+    private void SurfaceBlocks(ref ushort voxelValue, Vector3Int pos, BiomeAttributes biome, int terrainHeight)
+    {
         if (pos.y == terrainHeight)
         {
             voxelValue = biome.surfaceBlock;
@@ -447,15 +455,16 @@ public class World : MonoBehaviour
         }
         else if (pos.y > terrainHeight)
         {
-            return 0;
+            voxelValue = 0;
         }
         else
         {
             voxelValue = 3;
         }
+    }
 
-        /* SECOND PASS */
-
+    private void LodeGeneration(ref ushort voxelValue, Vector3Int pos, BiomeAttributes biome)
+    {
         if (voxelValue == 3 || voxelValue == 1)
         {
             foreach (Lode lode in biome.lodes)
@@ -469,9 +478,10 @@ public class World : MonoBehaviour
                 }
             }
         }
+    }
 
-        /* FLORA PASS */
-
+    private void FloraGeneration(ref ushort voxelValue, Vector3Int pos, BiomeAttributes biome, int terrainHeight)
+    {
         if (pos.y == terrainHeight && biome.placeMajorFlora)
         {
             if (Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 200, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
@@ -482,13 +492,21 @@ public class World : MonoBehaviour
                 }
             }
         }
-
-        return voxelValue;
     }
 
     public bool IsChunkInWorld(ChunkCoord coord)
     {
         return (coord.x >= 0 && coord.x < VoxelData.WorldSizeInChunks && coord.y >= 0 && coord.y < VoxelData.WorldSizeInChunks && coord.z >= 0 && coord.z < VoxelData.WorldSizeInChunks);
+    }
+
+    public bool IsInRange(int value, int length)
+    {
+        return (value >= 0 && value < length);
+    }
+
+    public bool IsInRange(Vector3Int value, int length)
+    {
+        return (IsInRange(value.x, length) && IsInRange(value.y, length) && IsInRange(value.z, length));
     }
 
     public bool IsVoxelInWorld(Vector3 pos)

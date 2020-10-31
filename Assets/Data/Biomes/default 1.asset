@@ -15,15 +15,15 @@ MonoBehaviour:
   biomeName: default 1
   offset: 22
   scale: 1
-  terrainHeight: 50
+  terrainHeight: 40
   terrainScale: 0.25
   surfaceBlock: 2
   subSurfaceBlock: 2
   majorFloraZoneScale: 1.3
   majorFloraIndex: 0
-  majorFloraZoneThreshold: 0.6
+  majorFloraZoneThreshold: 0.67
   majorFloraPlacementScale: 15
-  majorFloraPlacementThreshold: 0.6
+  majorFloraPlacementThreshold: 0.672
   placeMajorFlora: 1
   maxHeight: 12
   minHeight: 5

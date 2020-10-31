@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class BlockType
+[CreateAssetMenu(fileName = "BlockType", menuName = "Rimecraft/BlockType")]
+public class BlockType : ScriptableObject
 {
     public string blockName;
     public bool isSolid;
