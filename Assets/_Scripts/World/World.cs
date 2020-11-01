@@ -334,21 +334,21 @@ public class World : MonoBehaviour
         }
     }
 
-    public bool CheckForVoxel(Vector3Int pos)
+    public ushort CheckForVoxel(Vector3Int pos)
     {
         VoxelState voxel = worldData.GetVoxel(pos);
         if (voxel == null)
         {
-            return false;
+            return 0;
         }
 
         if (blockTypes[voxel.id].isSolid)
         {
-            return true;
+            return voxel.id;
         }
         else
         {
-            return false;
+            return 0;
         }
     }
 

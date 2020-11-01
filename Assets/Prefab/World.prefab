@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4319930333665759205
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4319930333665759203}
+  - component: {fileID: 4319930333665759204}
+  m_Layer: 0
+  m_Name: World
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4319930333665759203
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4319930333665759205}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4319930333665759204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4319930333665759205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255489fdb1148f8409cbe0ee4c1c0bb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings:
+    version: 0.0.1
+    loadDistance: 1
+    enableThreading: 0
+    viewDistanceInChunks: 1
+    mouseSensitivity: 2
+  biomes:
+  - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
+  - {fileID: 11400000, guid: bbc4d446ac35117488f080126e584d42, type: 2}
+  player: {fileID: 0}
+  spawnPosition: {x: 0, y: 0, z: 0}
+  material: {fileID: 2100000, guid: a2057a62d0e121f43922d28e5ccb4da9, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: cca088c3de9907d43a823f0496b6a4aa, type: 2}
+  blockTypes:
+  - {fileID: 11400000, guid: e9f7b72fa7fb21c4cb4d258f980dde16, type: 2}
+  - {fileID: 11400000, guid: fe2309b4a9c41cd4bbdaa8d40f0c4b4d, type: 2}
+  - {fileID: 11400000, guid: e4cb9d111f558a249938621ab5871e58, type: 2}
+  - {fileID: 11400000, guid: 4c32d07c21b64434d94b5e5308402c00, type: 2}
+  - {fileID: 11400000, guid: 67e0362cf7016f0438ee1a14c3b3e522, type: 2}
+  - {fileID: 11400000, guid: 3caa91537269c274d80da87fa143e183, type: 2}
+  - {fileID: 11400000, guid: 65778f50f921083419a4b19003b27012, type: 2}
+  debugScreen: {fileID: 0}
+  worldData:
+    worldName: New World
+    seed: 12233
+  appPath: 

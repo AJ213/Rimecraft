@@ -48,7 +48,7 @@ public class ChunkData
                     Vector3Int voxelGlobalPosition = new Vector3Int(x + this.Position.x, y + this.Position.y, z + this.Position.z);
                     map[x, y, z] = new VoxelState(World.Instance.GetVoxel(voxelGlobalPosition), this, new Vector3Int(x, y, z));
 
-                    /*for (int p = 0; p < 6; p++)
+                    for (int p = 0; p < 6; p++)
                     {
                         Vector3Int neighbourV3 = new Vector3Int(x, y, z) + VoxelData.faceChecks[p];
                         if (World.IsInRange(neighbourV3, VoxelData.ChunkWidth))
@@ -59,7 +59,7 @@ public class ChunkData
                         {
                             map[x, y, z].neighbours[p] = World.Instance.worldData.GetVoxel(voxelGlobalPosition + VoxelData.faceChecks[p]);
                         }
-                    }*/
+                    }
                 }
             }
         }
@@ -75,13 +75,13 @@ public class ChunkData
         }
 
         VoxelState voxel = map[pos.x, pos.y, pos.z];
-        //BlockType newVoxel = World.Instance.blockTypes[id];
+        BlockType newVoxel = World.Instance.blockTypes[id];
 
         voxel.id = id;
         World.Instance.worldData.AddToModifiedChunkList(this);
         if (chunk != null)
         {
-            World.Instance.AddChunkToUpdate(chunk);
+            World.Instance.AddChunkToUpdate(chunk, true);
         }
     }
 
