@@ -11,13 +11,13 @@ public class ElipsoidRigidbody : MonoBehaviour
     [SerializeField] private Vector3 velocity;
 
     public float VerticalMomentum { get; set; }
-    public bool IsGrounded { get; private set; }
+    public bool IsGrounded { get; set; }
 
     public bool Back
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z - objectWidth));
+            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z - (objectWidth - velocity.z)));
             return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
         }
     }
@@ -26,7 +26,7 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z + objectWidth));
+            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z + (objectWidth + velocity.z)));
             return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
         }
     }
@@ -35,7 +35,7 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x - objectWidth), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
+            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x - (objectWidth - velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
             return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
         }
     }
@@ -44,7 +44,7 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x + objectWidth), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
+            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x + (objectWidth + velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
             return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
         }
     }
@@ -87,30 +87,37 @@ public class ElipsoidRigidbody : MonoBehaviour
     private Vector3Int ObjectWidthBlockLocations(int index, float verticalOffset)
     {
         // Grabs the top right position block relative to object
+        float widthAdjustment = (objectWidth);
         if (index == 0)
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x - objectWidth, transform.position.y + verticalOffset, transform.position.z - objectWidth));
+            return Vector3Int.FloorToInt(new Vector3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
         }
         else if (index == 1)
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x + objectWidth, transform.position.y + verticalOffset, transform.position.z - objectWidth));
+            return Vector3Int.FloorToInt(new Vector3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
         }
         else if (index == 2)
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x + objectWidth, transform.position.y + verticalOffset, transform.position.z + objectWidth));
+            return Vector3Int.FloorToInt(new Vector3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
         }
         else
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x - objectWidth, transform.position.y + verticalOffset, transform.position.z + objectWidth));
+            return Vector3Int.FloorToInt(new Vector3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
         }
     }
 
     private bool ObjectObstructedVerticallyAt(float height)
     {
-        return (World.Instance.CheckForVoxel(ObjectWidthBlockLocations(0, height)) != 0 ||
+        return ((World.Instance.CheckForVoxel(ObjectWidthBlockLocations(0, height)) != 0) ||
             World.Instance.CheckForVoxel(ObjectWidthBlockLocations(1, height)) != 0 ||
             World.Instance.CheckForVoxel(ObjectWidthBlockLocations(2, height)) != 0 ||
             World.Instance.CheckForVoxel(ObjectWidthBlockLocations(3, height)) != 0);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, objectWidth);
     }
 
     private float CheckDownSpeed(float downSpeed)

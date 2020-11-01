@@ -106,6 +106,7 @@ public class Player : MonoBehaviour
     private void Jump()
     {
         rbody.VerticalMomentum = jumpForce;
+        rbody.IsGrounded = false;
         jumpRequest = false;
     }
 
