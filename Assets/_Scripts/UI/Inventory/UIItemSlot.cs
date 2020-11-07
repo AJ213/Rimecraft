@@ -10,11 +10,11 @@ public class UIItemSlot : MonoBehaviour
     public Image slotIcon;
     public TextMeshProUGUI slotAmount;
 
-    private World world;
+    private RimecraftWorld world;
 
     private void Awake()
     {
-        world = GameObject.Find("World").GetComponent<World>();
+        world = GameObject.Find("World").GetComponent<RimecraftWorld>();
     }
 
     public bool HasItem

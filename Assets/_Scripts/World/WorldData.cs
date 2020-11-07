@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 [System.Serializable]
 public class WorldData
@@ -8,7 +9,7 @@ public class WorldData
     public int seed;
 
     [System.NonSerialized]
-    public Dictionary<Vector3Int, ChunkData> chunks = new Dictionary<Vector3Int, ChunkData>();
+    public Dictionary<int3, ChunkData> chunks = new Dictionary<int3, ChunkData>();
 
     [System.NonSerialized]
     public List<ChunkData> modifiedChunks = new List<ChunkData>();
@@ -33,31 +34,28 @@ public class WorldData
         seed = worldData.seed;
     }
 
-    public ChunkData RequestChunk(Vector3Int coord, bool create)
+    public ChunkData RequestChunk(int3 coord, bool create)
     {
         ChunkData c;
 
-        lock (World.Instance.ChunkListThreadLock)
+        if (chunks.ContainsKey(coord))
         {
-            if (chunks.ContainsKey(coord))
-            {
-                c = chunks[coord];
-            }
-            else if (!create)
-            {
-                c = null;
-            }
-            else
-            {
-                LoadChunk(coord);
-                c = chunks[coord];
-            }
+            c = chunks[coord];
+        }
+        else if (!create)
+        {
+            c = null;
+        }
+        else
+        {
+            LoadChunk(coord);
+            c = chunks[coord];
         }
 
         return c;
     }
 
-    public void LoadChunk(Vector3Int coord)
+    public void LoadChunk(int3 coord)
     {
         if (chunks.ContainsKey(coord))
         {
@@ -75,9 +73,9 @@ public class WorldData
         chunks[coord].Populate();
     }
 
-    public void SetVoxel(Vector3Int pos, ushort value)
+    public void SetVoxel(int3 pos, ushort value)
     {
-        if (!World.IsInRange(pos, VoxelData.WorldSizeInVoxels))
+        if (!WorldHelper.IsInRange(pos, VoxelData.WorldSizeInVoxels))
         {
             return;
         }
@@ -90,16 +88,16 @@ public class WorldData
         y *= VoxelData.ChunkWidth;
         z *= VoxelData.ChunkWidth;
 
-        ChunkData chunk = RequestChunk(new Vector3Int(x, y, z), true);
+        ChunkData chunk = RequestChunk(new int3(x, y, z), true);
 
-        Vector3Int voxel = new Vector3Int((pos.x - x), (pos.y - y), (pos.z - z));
+        int3 voxel = new int3((pos.x - x), (pos.y - y), (pos.z - z));
 
         chunk.ModifyVoxel(voxel, value);
     }
 
-    public VoxelState GetVoxel(Vector3Int pos)
+    public VoxelState GetVoxel(int3 pos)
     {
-        if (!World.IsInRange(pos, VoxelData.WorldSizeInVoxels))
+        if (!WorldHelper.IsInRange(pos, VoxelData.WorldSizeInVoxels))
         {
             return null;
         }
@@ -112,14 +110,14 @@ public class WorldData
         y *= VoxelData.ChunkWidth;
         z *= VoxelData.ChunkWidth;
 
-        ChunkData chunk = RequestChunk(new Vector3Int(x, y, z), false);
+        ChunkData chunk = RequestChunk(new int3(x, y, z), false);
 
         if (chunk == null)
         {
             return null;
         }
 
-        Vector3Int voxel = new Vector3Int((pos.x - x), (pos.y - y), (pos.z - z));
+        int3 voxel = new int3((pos.x - x), (pos.y - y), (pos.z - z));
         try
         {
             return chunk.map[voxel.x, voxel.y, voxel.z];

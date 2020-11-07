@@ -4,12 +4,13 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using Unity.Mathematics;
 
 public static class SaveSystem
 {
     public static void SaveWorld(WorldData world)
     {
-        string savePath = World.Instance.appPath + "/save/" + world.worldName + "/";
+        string savePath = RimecraftWorld.Instance.appPath + "/save/" + world.worldName + "/";
         if (!Directory.Exists(savePath))
         {
             Directory.CreateDirectory(savePath);
@@ -43,7 +44,7 @@ public static class SaveSystem
 
     public static WorldData LoadWorld(string worldName, int seed = 0)
     {
-        string loadPath = World.Instance.appPath + "/saves/" + worldName + "/";
+        string loadPath = RimecraftWorld.Instance.appPath + "/saves/" + worldName + "/";
         if (File.Exists(loadPath + "world.world"))
         {
             Debug.Log(worldName + " found. Loading from save.");
@@ -70,7 +71,7 @@ public static class SaveSystem
     {
         string chunkName = chunk.Position.x + "-" + chunk.Position.y + "-" + chunk.Position.z;
 
-        string savePath = World.Instance.appPath + "/save/" + worldName + "/chunks/";
+        string savePath = RimecraftWorld.Instance.appPath + "/save/" + worldName + "/chunks/";
         if (!Directory.Exists(savePath))
         {
             Directory.CreateDirectory(savePath);
@@ -83,11 +84,11 @@ public static class SaveSystem
         stream.Close();
     }
 
-    public static ChunkData LoadChunk(string worldName, Vector3Int position)
+    public static ChunkData LoadChunk(string worldName, int3 position)
     {
         string chunkName = position.x + "-" + position.y + "-" + position.z;
 
-        string loadPath = World.Instance.appPath + "/saves/" + worldName + "/chunks/" + chunkName + ".chunk";
+        string loadPath = RimecraftWorld.Instance.appPath + "/saves/" + worldName + "/chunks/" + chunkName + ".chunk";
 
         if (File.Exists(loadPath))
         {

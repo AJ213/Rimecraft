@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.IO;
 using UnityEngine;
+using Unity.Mathematics;
 
-public class World : MonoBehaviour
+public class RimecraftWorld : MonoBehaviour
 {
     public Settings settings;
     public BiomeAttributes[] biomes;
@@ -15,7 +15,8 @@ public class World : MonoBehaviour
     public Material transparentMaterial = null;
     public BlockType[] blockTypes = null;
 
-    private Chunk[,,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
+    [HideInInspector]
+    public Chunk[,,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
 
     private List<ChunkCoord> activeChunks = new List<ChunkCoord>();
     public ChunkCoord playerChunkCoord;
@@ -32,12 +33,8 @@ public class World : MonoBehaviour
 
     public GameObject debugScreen;
 
-    private Thread ChunkUpdateThread;
-    public object ChunkUpdateThreadLock = new object();
-    public object ChunkListThreadLock = new object();
-
-    private static World instance;
-    public static World Instance => instance;
+    private static RimecraftWorld instance;
+    public static RimecraftWorld Instance => instance;
 
     public WorldData worldData;
 
@@ -63,7 +60,7 @@ public class World : MonoBehaviour
 
         worldData = SaveSystem.LoadWorld("Prototype");
 
-        Random.InitState(VoxelData.seed);
+        UnityEngine.Random.InitState(VoxelData.seed);
         Camera.main.farClipPlane = Mathf.Sqrt(2) * VoxelData.ChunkWidth * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
@@ -72,18 +69,12 @@ public class World : MonoBehaviour
         //CheckLoadDistance();
         CheckViewDistance();
 
-        playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
-
-        if (settings.enableThreading)
-        {
-            ChunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
-            ChunkUpdateThread.Start();
-        }
+        playerLastChunkCoord = WorldHelper.GetChunkCoordFromVector3(player.position);
     }
 
     private void Update()
     {
-        playerChunkCoord = GetChunkCoordFromVector3(player.position);
+        playerChunkCoord = WorldHelper.GetChunkCoordFromVector3(player.position);
 
         if (!playerChunkCoord.Equals(playerLastChunkCoord))
         {
@@ -91,17 +82,14 @@ public class World : MonoBehaviour
             CheckViewDistance();
         }
 
-        if (!settings.enableThreading)
+        if (!applyingModifications)
         {
-            if (!applyingModifications)
-            {
-                ApplyModifications();
-            }
+            ApplyModifications();
+        }
 
-            if (chunksToUpdate.Count > 0)
-            {
-                UpdateChunks();
-            }
+        if (chunksToUpdate.Count > 0)
+        {
+            UpdateChunks();
         }
 
         if (chunksToDraw.Count > 0)
@@ -123,7 +111,7 @@ public class World : MonoBehaviour
             {
                 for (int z = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; z < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; z++)
                 {
-                    worldData.LoadChunk(new Vector3Int(x, y, z));
+                    worldData.LoadChunk(new int3(x, y, z));
                 }
             }
         }
@@ -137,59 +125,30 @@ public class World : MonoBehaviour
     public void AddChunkToUpdate(Chunk chunk, bool insert)
     {
         // Lock list to ensure only one thing is using the list at a time.
-        lock (ChunkUpdateThreadLock)
+
+        // Make sure update list doesn't already contain chunk.
+        if (!chunksToUpdate.Contains(chunk))
         {
-            // Make sure update list doesn't already contain chunk.
-            if (!chunksToUpdate.Contains(chunk))
+            // If insert is true, chunk gets inserted at the top of the list.
+            if (insert)
             {
-                // If insert is true, chunk gets inserted at the top of the list.
-                if (insert)
-                {
-                    chunksToUpdate.Insert(0, chunk);
-                }
-                else
-                {
-                    chunksToUpdate.Add(chunk);
-                }
+                chunksToUpdate.Insert(0, chunk);
+            }
+            else
+            {
+                chunksToUpdate.Add(chunk);
             }
         }
     }
 
     private void UpdateChunks()
     {
-        lock (ChunkUpdateThreadLock)
+        chunksToUpdate[0].UpdateChunk();
+        if (!activeChunks.Contains(chunksToUpdate[0].coord))
         {
-            chunksToUpdate[0].UpdateChunk();
-            if (!activeChunks.Contains(chunksToUpdate[0].coord))
-            {
-                activeChunks.Add(chunksToUpdate[0].coord);
-            }
-            chunksToUpdate.RemoveAt(0);
+            activeChunks.Add(chunksToUpdate[0].coord);
         }
-    }
-
-    private void ThreadedUpdate()
-    {
-        while (true)
-        {
-            if (!applyingModifications)
-            {
-                ApplyModifications();
-            }
-
-            if (chunksToUpdate.Count > 0)
-            {
-                UpdateChunks();
-            }
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (settings.enableThreading)
-        {
-            ChunkUpdateThread.Abort();
-        }
+        chunksToUpdate.RemoveAt(0);
     }
 
     private void ApplyModifications()
@@ -210,33 +169,9 @@ public class World : MonoBehaviour
         applyingModifications = false;
     }
 
-    private ChunkCoord GetChunkCoordFromVector3(Vector3 pos)
-    {
-        int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
-        int y = Mathf.FloorToInt(pos.y / VoxelData.ChunkWidth);
-        int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
-        return new ChunkCoord(x, y, z);
-    }
-
-    public Chunk GetChunkFromVector3(Vector3 pos)
-    {
-        int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
-        int y = Mathf.FloorToInt(pos.y / VoxelData.ChunkWidth);
-        int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
-        try
-        {
-            return chunks[x, y, z];
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log(pos.x + ", " + pos.y + ", " + pos.z + "| due to " + x + ", " + y + ", " + z);
-            throw e;
-        }
-    }
-
     private void CheckViewDistance()
     {
-        ChunkCoord coord = GetChunkCoordFromVector3(player.position);
+        ChunkCoord coord = WorldHelper.GetChunkCoordFromVector3(player.position);
         playerLastChunkCoord = playerChunkCoord;
 
         List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);
@@ -253,7 +188,7 @@ public class World : MonoBehaviour
                     ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
 
                     // If the current chunk is in the world...
-                    if (IsInRange(thisChunkCoord.ToVector3Int(), VoxelData.WorldSizeInChunks))
+                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), VoxelData.WorldSizeInChunks))
                     {
                         // Check if it active, if not, activate it.
                         if (chunks[x, y, z] == null)
@@ -286,7 +221,7 @@ public class World : MonoBehaviour
 
     private void CheckLoadDistance()
     {
-        ChunkCoord coord = GetChunkCoordFromVector3(player.position);
+        ChunkCoord coord = WorldHelper.GetChunkCoordFromVector3(player.position);
         playerLastChunkCoord = playerChunkCoord;
 
         List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);
@@ -303,7 +238,7 @@ public class World : MonoBehaviour
                     ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
 
                     // If the current chunk is in the world...
-                    if (IsInRange(thisChunkCoord.ToVector3Int(), VoxelData.WorldSizeInChunks))
+                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), VoxelData.WorldSizeInChunks))
                     {
                         // Check if it active, if not, activate it.
                         if (chunks[x, y, z] == null)
@@ -334,7 +269,7 @@ public class World : MonoBehaviour
         }
     }
 
-    public ushort CheckForVoxel(Vector3Int pos)
+    public ushort CheckForVoxel(int3 pos)
     {
         VoxelState voxel = worldData.GetVoxel(pos);
         if (voxel == null)
@@ -352,7 +287,7 @@ public class World : MonoBehaviour
         }
     }
 
-    public VoxelState GetVoxelState(Vector3Int pos)
+    public VoxelState GetVoxelState(int3 pos)
     {
         return worldData.GetVoxel(pos);
     }
@@ -376,12 +311,12 @@ public class World : MonoBehaviour
         }
     }
 
-    public ushort GetVoxel(Vector3Int pos)
+    public ushort GetVoxel(int3 pos)
     {
         /* IMMUTABLE PASS */
 
         // If outside word, return air.
-        if (!IsInRange(pos, VoxelData.WorldSizeInVoxels))
+        if (!WorldHelper.IsInRange(pos, VoxelData.WorldSizeInVoxels))
         {
             return 0;
         }
@@ -392,8 +327,6 @@ public class World : MonoBehaviour
             return 2;
         }
 
-        /* BIOME SELECTION PASS */
-
         int solidGroundHeight = VoxelData.WorldSizeInVoxels - 150;
         float sumOfHeights = 0;
         int count = 0;
@@ -402,7 +335,7 @@ public class World : MonoBehaviour
 
         for (int i = 0; i < biomes.Length; i++)
         {
-            float weight = Noise.Get2DPerlin(new Vector2(pos.x, pos.z), biomes[i].offset, biomes[i].scale);
+            float weight = Noise.Get2DSimplex(new Vector2(pos.x, pos.z), biomes[i].offset, biomes[i].scale);
 
             // Keep track of which weight is strongest.
             if (weight > strongestWeight)
@@ -412,7 +345,7 @@ public class World : MonoBehaviour
             }
 
             // Get the height of the terrain (for the current biome) and multiply it by its weight.
-            float height = biomes[i].terrainHeight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 2 * biomes[i].offset, biomes[i].terrainScale) * weight;
+            float height = biomes[i].terrainHeight * Noise.Get2DSimplex(new Vector2(pos.x, pos.z), 2 * biomes[i].offset, biomes[i].terrainScale) * weight;
 
             // If the height value is greater 0 add it to the sum of heights.
             if (height > 0)
@@ -442,7 +375,7 @@ public class World : MonoBehaviour
         return voxelValue;
     }
 
-    private void SurfaceBlocks(ref ushort voxelValue, Vector3Int pos, BiomeAttributes biome, int terrainHeight)
+    private void SurfaceBlocks(ref ushort voxelValue, int3 pos, BiomeAttributes biome, int terrainHeight)
     {
         if (pos.y == terrainHeight)
         {
@@ -462,7 +395,7 @@ public class World : MonoBehaviour
         }
     }
 
-    private void LodeGeneration(ref ushort voxelValue, Vector3Int pos, BiomeAttributes biome)
+    private void LodeGeneration(ref ushort voxelValue, int3 pos, BiomeAttributes biome)
     {
         if (voxelValue == 3 || voxelValue == 1)
         {
@@ -470,7 +403,7 @@ public class World : MonoBehaviour
             {
                 if (pos.y > lode.minHeight && pos.y < lode.maxHeight)
                 {
-                    if (Noise.Get3DPerlin(pos, lode.noiseOffset, lode.scale) > lode.threshold)
+                    if (Noise.Get3DSimplex(pos, lode.noiseOffset, lode.scale) > lode.threshold)
                     {
                         voxelValue = lode.blockID;
                     }
@@ -479,27 +412,17 @@ public class World : MonoBehaviour
         }
     }
 
-    private void FloraGeneration(Vector3Int pos, BiomeAttributes biome, int terrainHeight)
+    private void FloraGeneration(int3 pos, BiomeAttributes biome, int terrainHeight)
     {
         if (pos.y == terrainHeight && biome.placeMajorFlora)
         {
-            if (Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 200, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
+            if (Noise.Get2DSimplex(new Vector2(pos.x, pos.z), 200, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
             {
-                if (Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 700, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
+                if (Noise.Get2DSimplex(new Vector2(pos.x, pos.z), 700, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
                 {
                     modifications.Enqueue(Structure.GenerateMajorFlora(biome.majorFloraIndex, pos, biome.minHeight, biome.maxHeight));
                 }
             }
         }
-    }
-
-    public static bool IsInRange(int value, int length)
-    {
-        return (value >= 0 && value < length);
-    }
-
-    public static bool IsInRange(Vector3Int value, int length)
-    {
-        return (IsInRange(value.x, length) && IsInRange(value.y, length) && IsInRange(value.z, length));
     }
 }

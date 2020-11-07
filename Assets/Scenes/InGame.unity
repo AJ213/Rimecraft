@@ -260,6 +260,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1397703394 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4319930333665759205, guid: b6466c8000b07a940886f4bcd12b5ac2, type: 3}
+  m_PrefabInstance: {fileID: 4319930335167814871}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1397703395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397703394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b66c6f1a6b5869478a50dd54c20a84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings:
+    version: 0.1
+    loadDistance: 1
+    viewDistanceInChunks: 2
+    mouseSensitivity: 2
+  biomes:
+  - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
+  - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
+  player: {fileID: 332412510}
+  spawnPosition: {x: 0, y: 0, z: 0}
+  material: {fileID: 2100000, guid: a2057a62d0e121f43922d28e5ccb4da9, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: cca088c3de9907d43a823f0496b6a4aa, type: 2}
+  blockTypes:
+  - {fileID: 11400000, guid: e9f7b72fa7fb21c4cb4d258f980dde16, type: 2}
+  - {fileID: 11400000, guid: fe2309b4a9c41cd4bbdaa8d40f0c4b4d, type: 2}
+  - {fileID: 11400000, guid: e4cb9d111f558a249938621ab5871e58, type: 2}
+  - {fileID: 11400000, guid: 4c32d07c21b64434d94b5e5308402c00, type: 2}
+  - {fileID: 11400000, guid: 67e0362cf7016f0438ee1a14c3b3e522, type: 2}
+  - {fileID: 11400000, guid: 3caa91537269c274d80da87fa143e183, type: 2}
+  - {fileID: 11400000, guid: 65778f50f921083419a4b19003b27012, type: 2}
+  debugScreen: {fileID: 2060800638}
+  worldData:
+    worldName: Default
+    seed: 0
+  appPath: 
 --- !u!1 &2060800638 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3774411707447604822, guid: 63ba980d4c604f244b2b64ba5d099ce2, type: 3}
@@ -281,6 +323,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 332412509}
+    - target: {fileID: 3774411707447604822, guid: 63ba980d4c604f244b2b64ba5d099ce2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3774411707535895401, guid: 63ba980d4c604f244b2b64ba5d099ce2, type: 3}
       propertyPath: m_Name
       value: UICanvas
@@ -430,11 +476,16 @@ PrefabInstance:
       propertyPath: debugScreen
       value: 
       objectReference: {fileID: 2060800638}
+    - target: {fileID: 4319930333665759204, guid: b6466c8000b07a940886f4bcd12b5ac2, type: 3}
+      propertyPath: settings.viewDistanceInChunks
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4319930333665759205, guid: b6466c8000b07a940886f4bcd12b5ac2, type: 3}
       propertyPath: m_Name
       value: World
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4319930333665759204, guid: b6466c8000b07a940886f4bcd12b5ac2, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b6466c8000b07a940886f4bcd12b5ac2, type: 3}
 --- !u!1001 &4415150392989172955
 PrefabInstance:
@@ -561,6 +612,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Directional Light
       objectReference: {fileID: 0}
+    - target: {fileID: 7558371697509035949, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
+      propertyPath: m_ShadowDimmer
+      value: 0.975
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558371697509035949, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
+      propertyPath: m_VolumetricDimmer
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 7558371697509035951, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.24
@@ -673,6 +732,10 @@ PrefabInstance:
     - target: {fileID: 8737026440282011879, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026441203080330, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: antialiasing
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class ElipsoidRigidbody : MonoBehaviour
@@ -17,8 +18,8 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z - (objectWidth - velocity.z)));
-            return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
+            int3 position = new int3(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z - (objectWidth - velocity.z)));
+            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
         }
     }
 
@@ -26,8 +27,8 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z + (objectWidth + velocity.z)));
-            return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
+            int3 position = new int3(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z + (objectWidth + velocity.z)));
+            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
         }
     }
 
@@ -35,8 +36,8 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x - (objectWidth - velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
-            return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
+            int3 position = new int3(Mathf.FloorToInt(transform.position.x - (objectWidth - velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
+            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
         }
     }
 
@@ -44,8 +45,8 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         get
         {
-            Vector3Int position = new Vector3Int(Mathf.FloorToInt(transform.position.x + (objectWidth + velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
-            return World.Instance.CheckForVoxel(position) != 0 || World.Instance.CheckForVoxel(position + Vector3Int.up) != 0;
+            int3 position = new int3(Mathf.FloorToInt(transform.position.x + (objectWidth + velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
+            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
         }
     }
 
@@ -84,34 +85,34 @@ public class ElipsoidRigidbody : MonoBehaviour
         }
     }
 
-    private Vector3Int ObjectWidthBlockLocations(int index, float verticalOffset)
+    private int3 ObjectWidthBlockLocations(int index, float verticalOffset)
     {
         // Grabs the top right position block relative to object
         float widthAdjustment = (objectWidth);
         if (index == 0)
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
+            return new int3(new float3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
         }
         else if (index == 1)
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
+            return new int3(new float3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
         }
         else if (index == 2)
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
+            return new int3(new float3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
         }
         else
         {
-            return Vector3Int.FloorToInt(new Vector3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
+            return new int3(new float3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
         }
     }
 
     private bool ObjectObstructedVerticallyAt(float height)
     {
-        return ((World.Instance.CheckForVoxel(ObjectWidthBlockLocations(0, height)) != 0) ||
-            World.Instance.CheckForVoxel(ObjectWidthBlockLocations(1, height)) != 0 ||
-            World.Instance.CheckForVoxel(ObjectWidthBlockLocations(2, height)) != 0 ||
-            World.Instance.CheckForVoxel(ObjectWidthBlockLocations(3, height)) != 0);
+        return ((RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(0, height)) != 0) ||
+            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(1, height)) != 0 ||
+            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(2, height)) != 0 ||
+            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(3, height)) != 0);
     }
 
     private void OnDrawGizmos()
@@ -150,7 +151,7 @@ public class ElipsoidRigidbody : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!World.Instance.InUI)
+        if (!RimecraftWorld.Instance.InUI)
         {
             transform.Translate(velocity, Space.World);
         }

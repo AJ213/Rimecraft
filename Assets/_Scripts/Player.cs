@@ -1,43 +1,42 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     // Moving Mouse
 
-    public float mouseSensitivity = 2;
     private float mouseHorizontal;
     private float mouseVertical;
 
     // Placing Blocks
 
-    public float checkIncrement = 0.1f;
-    public float reach = 8;
-    public Transform highlightBlock;
-    public Transform placeBlock;
+    [SerializeField] private float checkIncrement = 0.1f;
+    [SerializeField] private float reach = 8;
+    [SerializeField] private Transform highlightBlock = null;
+    [SerializeField] private Transform placeBlock = null;
 
     // Jumping and falling
 
-    [SerializeField] private ElipsoidRigidbody rbody;
-
-    public float jumpForce = 5;
+    private ElipsoidRigidbody rbody;
+    [SerializeField] private float jumpForce = 5;
     private bool jumpRequest;
 
     // Moving
 
-    public bool isSprinting;
-    public float sprintSpeed = 6;
-    public float walkSpeed = 3;
+    [SerializeField] private bool isSprinting = false;
+    [SerializeField] private float sprintSpeed = 6;
+    [SerializeField] private float walkSpeed = 3;
     private float horizontal;
     private float vertical;
 
     // Misc
 
     private Transform cam;
-    public Toolbar toolbar;
+    [SerializeField] private Toolbar toolbar = null;
 
     private void FixedUpdate()
     {
-        if (!World.Instance.InUI)
+        if (!RimecraftWorld.Instance.InUI)
         {
             if (jumpRequest)
             {
@@ -52,8 +51,8 @@ public class Player : MonoBehaviour
                 rbody.CalculateVelocity(horizontal, vertical, walkSpeed);
             }
 
-            transform.Rotate(Vector3.up * mouseHorizontal * World.Instance.settings.mouseSensitivity);
-            cam.Rotate(Vector3.right * -mouseVertical * World.Instance.settings.mouseSensitivity);
+            transform.Rotate(Vector3.up * mouseHorizontal * RimecraftWorld.Instance.settings.mouseSensitivity);
+            cam.Rotate(Vector3.right * -mouseVertical * RimecraftWorld.Instance.settings.mouseSensitivity);
         }
     }
 
@@ -88,7 +87,7 @@ public class Player : MonoBehaviour
             // Destroy Block
             if (Input.GetMouseButtonDown(0))
             {
-                World.Instance.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+                WorldHelper.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
             }
 
             // Build Block
@@ -96,7 +95,7 @@ public class Player : MonoBehaviour
             {
                 if (toolbar.slots[toolbar.slotIndex].HasItem)
                 {
-                    World.Instance.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
+                    WorldHelper.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
                     toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
                 }
             }
@@ -117,9 +116,9 @@ public class Player : MonoBehaviour
 
         while (step < reach)
         {
-            Vector3 pos = cam.position + (cam.forward * step);
+            float3 pos = cam.position + (cam.forward * step);
 
-            if (World.Instance.CheckForVoxel(Vector3Int.FloorToInt(pos)) != 0)
+            if (RimecraftWorld.Instance.CheckForVoxel(new int3(pos)) != 0)
             {
                 highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
                 placeBlock.position = lastPos;
@@ -143,17 +142,17 @@ public class Player : MonoBehaviour
     {
         rbody = this.gameObject.GetComponent<ElipsoidRigidbody>();
         cam = Camera.main.transform;
-        World.Instance.InUI = false;
+        RimecraftWorld.Instance.InUI = false;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            World.Instance.InUI = !World.Instance.InUI;
+            RimecraftWorld.Instance.InUI = !RimecraftWorld.Instance.InUI;
         }
 
-        if (!World.Instance.InUI)
+        if (!RimecraftWorld.Instance.InUI)
         {
             GetPlayerInputs();
             PlaceCursorBlock();

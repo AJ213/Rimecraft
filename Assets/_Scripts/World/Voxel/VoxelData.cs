@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 
 public static class VoxelData
 {
@@ -16,26 +17,26 @@ public static class VoxelData
     public static float NoramlizedBlockTextureSize
     { get { return 1 / (float)TextureAtlasSizeInBlocks; } }
 
-    public static readonly Vector3[] voxelVerts = new Vector3[8]
+    public static readonly int3[] voxelVerts = new int3[8]
     {
-        new Vector3(0, 0, 0),
-        new Vector3(1, 0, 0),
-        new Vector3(1, 1, 0),
-        new Vector3(0, 1, 0),
-        new Vector3(0, 0, 1),
-        new Vector3(1, 0, 1),
-        new Vector3(1, 1, 1),
-        new Vector3(0, 1, 1)
+        new int3(0, 0, 0),
+        new int3(1, 0, 0),
+        new int3(1, 1, 0),
+        new int3(0, 1, 0),
+        new int3(0, 0, 1),
+        new int3(1, 0, 1),
+        new int3(1, 1, 1),
+        new int3(0, 1, 1)
     };
 
-    public static readonly Vector3Int[] faceChecks = new Vector3Int[6]
+    public static readonly int3[] faceChecks = new int3[6]
     {
-        new Vector3Int(0, 0, -1),
-        new Vector3Int(0, 0, 1),
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(0, -1, 0),
-        new Vector3Int(-1, 0, 0),
-        new Vector3Int(1, 0, 0)
+        new int3(0, 0, -1),
+        new int3(0, 0, 1),
+        new int3(0, 1, 0),
+        new int3(0, -1, 0),
+        new int3(-1, 0, 0),
+        new int3(1, 0, 0)
     };
 
     public static readonly int[] revFaceCheckIndex = new int[6] { 1, 0, 3, 2, 5, 4 };
@@ -52,11 +53,11 @@ public static class VoxelData
         {1, 2, 5, 6}  // Right Face
     };
 
-    public static readonly Vector2[] voxelUvs = new Vector2[4]
+    public static readonly int2[] voxelUvs = new int2[4]
     {
-        new Vector2(0, 0),
-        new Vector2(0, 1),
-        new Vector2(1, 0),
-        new Vector2(1, 1)
+        new int2(0, 0),
+        new int2(0, 1),
+        new int2(1, 0),
+        new int2(1, 1)
     };
 }

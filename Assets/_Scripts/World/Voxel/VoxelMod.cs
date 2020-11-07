@@ -1,19 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class VoxelMod
 {
-    public Vector3Int position;
+    public int3 position;
     public ushort id;
 
     public VoxelMod()
     {
-        position = new Vector3Int();
+        position = new int3();
         id = 0;
     }
 
-    public VoxelMod(Vector3Int position, ushort id)
+    public VoxelMod(int3 position, ushort id)
     {
         this.position = position;
         this.id = id;

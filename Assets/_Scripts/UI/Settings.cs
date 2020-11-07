@@ -11,8 +11,6 @@ public class Settings
     [Header("Performance")]
     public int loadDistance = 16;
 
-    public bool enableThreading = true;
-
     public int viewDistanceInChunks = 8;
 
     [Range(0.1f, 10f)]

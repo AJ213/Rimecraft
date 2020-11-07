@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -8,9 +9,9 @@ public class VoxelState
     public ushort id;
     [System.NonSerialized] public ChunkData chunkData;
     [System.NonSerialized] public VoxelNeighbors neighbours;
-    [System.NonSerialized] public Vector3Int position;
+    [System.NonSerialized] public int3 position;
 
-    public VoxelState(ushort id, ChunkData chunkData, Vector3Int position)
+    public VoxelState(ushort id, ChunkData chunkData, int3 position)
     {
         this.id = id;
         this.chunkData = chunkData;
@@ -18,58 +19,13 @@ public class VoxelState
         this.position = position;
     }
 
-    public Vector3Int GlobalPosition
+    public int3 GlobalPosition
     {
-        get { return new Vector3Int(position.x + chunkData.Position.x, position.y + chunkData.Position.y, position.z + chunkData.Position.z); }
+        get { return new int3(position.x + chunkData.Position.x, position.y + chunkData.Position.y, position.z + chunkData.Position.z); }
     }
 
     public BlockType Properties
     {
-        get { return World.Instance.blockTypes[id]; }
-    }
-}
-
-public class VoxelNeighbors
-{
-    public readonly VoxelState parent;
-
-    public VoxelNeighbors(VoxelState parent)
-    {
-        this.parent = parent;
-    }
-
-    private VoxelState[] neighbors = new VoxelState[6];
-
-    public int Length { get { return neighbors.Length; } }
-
-    public VoxelState this[int index]
-    {
-        get
-        {
-            if (neighbors[index] == null)
-            {
-                neighbors[index] = World.Instance.worldData.GetVoxel(parent.GlobalPosition + VoxelData.faceChecks[index]);
-                ReturnNeighbour(index);
-            }
-            return neighbors[index];
-        }
-        set
-        {
-            neighbors[index] = value;
-            ReturnNeighbour(index);
-        }
-    }
-
-    private void ReturnNeighbour(int index)
-    {
-        if (neighbors[index] == null)
-        {
-            return;
-        }
-
-        if (neighbors[index].neighbours[VoxelData.revFaceCheckIndex[index]] != parent)
-        {
-            neighbors[index].neighbours[VoxelData.revFaceCheckIndex[index]] = parent;
-        }
+        get { return RimecraftWorld.Instance.blockTypes[id]; }
     }
 }

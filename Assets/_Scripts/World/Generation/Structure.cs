@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public static class Structure
 {
-    public static Queue<VoxelMod> GenerateMajorFlora(int index, Vector3Int position, int minTrunkHeight, int maxTrunkHeight)
+    public static Queue<VoxelMod> GenerateMajorFlora(int index, int3 position, int minTrunkHeight, int maxTrunkHeight)
     {
         switch (index)
         {
@@ -15,11 +16,11 @@ public static class Structure
         }
     }
 
-    public static Queue<VoxelMod> MakeTree(Vector3Int position, int minTrunkHeight, int maxTrunkHeight)
+    public static Queue<VoxelMod> MakeTree(int3 position, int minTrunkHeight, int maxTrunkHeight)
     {
         Queue<VoxelMod> queue = new Queue<VoxelMod>();
 
-        int height = (int)(maxTrunkHeight * Noise.Get2DPerlin(new Vector2(position.x, position.z), 222, 3));
+        int height = (int)(maxTrunkHeight * Noise.Get2DSimplex(new int2(position.x, position.z), 222, 3));
 
         if (height < minTrunkHeight)
         {
@@ -28,7 +29,7 @@ public static class Structure
 
         for (int i = 1; i < height; i++)
         {
-            queue.Enqueue(new VoxelMod(new Vector3Int(position.x, position.y + i, position.z), 4));
+            queue.Enqueue(new VoxelMod(new int3(position.x, position.y + i, position.z), 4));
         }
         for (int y = 1; y < 3; y++)
         {
@@ -36,7 +37,7 @@ public static class Structure
             {
                 for (int z = -y; z < 3; z++)
                 {
-                    queue.Enqueue(new VoxelMod(new Vector3Int(position.x + x, position.y + height - y, position.z + z), 6));
+                    queue.Enqueue(new VoxelMod(new int3(position.x + x, position.y + height - y, position.z + z), 6));
                 }
             }
         }

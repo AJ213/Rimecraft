@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Unity.Mathematics;
 
 public class Chunk
 {
@@ -18,7 +19,7 @@ public class Chunk
     private List<Vector2> uvs = new List<Vector2>();
     private List<Vector3> normals = new List<Vector3>();
 
-    public Vector3Int position;
+    public int3 position;
 
     private bool isActive;
 
@@ -32,19 +33,19 @@ public class Chunk
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 
-        materials[0] = World.Instance.material;
-        materials[1] = World.Instance.transparentMaterial;
+        materials[0] = RimecraftWorld.Instance.material;
+        materials[1] = RimecraftWorld.Instance.transparentMaterial;
         meshRenderer.materials = materials;
 
-        chunkObject.transform.SetParent(World.Instance.transform);
+        chunkObject.transform.SetParent(RimecraftWorld.Instance.transform);
         chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, coord.y * VoxelData.ChunkWidth, coord.z * VoxelData.ChunkWidth);
         chunkObject.name = "Chunk " + coord.x + ", " + coord.y + "," + coord.z;
-        position = Vector3Int.FloorToInt(chunkObject.transform.position);
+        position = (int3)(float3)chunkObject.transform.position;
 
-        chunkData = World.Instance.worldData.RequestChunk(new Vector3Int(position.x, position.y, position.z), true);
+        chunkData = RimecraftWorld.Instance.worldData.RequestChunk(new int3(position.x, position.y, position.z), true);
         chunkData.chunk = this;
 
-        World.Instance.AddChunkToUpdate(this);
+        RimecraftWorld.Instance.AddChunkToUpdate(this);
     }
 
     public void UpdateChunk()
@@ -57,14 +58,14 @@ public class Chunk
             {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
-                    if (World.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
+                    if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
                     {
-                        UpdateMeshData(new Vector3Int(x, y, z));
+                        UpdateMeshData(new int3(x, y, z));
                     }
                 }
             }
         }
-        World.Instance.chunksToDraw.Enqueue(this);
+        RimecraftWorld.Instance.chunksToDraw.Enqueue(this);
     }
 
     public void EditVoxel(Vector3 pos, ushort newID)
@@ -77,31 +78,31 @@ public class Chunk
         yCheck -= Mathf.FloorToInt(chunkObject.transform.position.y);
         zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
 
-        chunkData.ModifyVoxel(new Vector3Int(xCheck, yCheck, zCheck), newID);
+        chunkData.ModifyVoxel(new int3(xCheck, yCheck, zCheck), newID);
 
         UpdateSorroundingVoxels(xCheck, yCheck, zCheck);
     }
 
     private void UpdateSorroundingVoxels(int x, int y, int z)
     {
-        Vector3Int thisVoxel = new Vector3Int(x, y, z);
+        int3 thisVoxel = new int3(x, y, z);
         for (int p = 0; p < 6; p++)
         {
-            Vector3Int currentVoxel = thisVoxel + VoxelData.faceChecks[p];
+            int3 currentVoxel = thisVoxel + VoxelData.faceChecks[p];
 
-            if (World.IsInRange(currentVoxel, VoxelData.ChunkWidth))
+            if (!WorldHelper.IsInRange(currentVoxel, VoxelData.ChunkWidth) && WorldHelper.IsInRange(currentVoxel + position, VoxelData.WorldSizeInVoxels))
             {
-                World.Instance.AddChunkToUpdate(World.Instance.GetChunkFromVector3(currentVoxel + position), true);
+                RimecraftWorld.Instance.AddChunkToUpdate(WorldHelper.GetChunkFromVector3((float3)(currentVoxel + position)), true);
             }
         }
     }
 
-    public VoxelState GetVoxelFromGlobalVector3(Vector3Int pos)
+    public VoxelState GetVoxelFromGlobalVector3(int3 pos)
     {
         return chunkData.map[pos.x - position.x, pos.y - position.y, pos.z - position.z];
     }
 
-    private void UpdateMeshData(Vector3Int pos)
+    private void UpdateMeshData(int3 pos)
     {
         VoxelState voxel = chunkData.map[pos.x, pos.y, pos.z];
 
@@ -113,7 +114,7 @@ public class Chunk
                 int faceVertCount = 0;
                 for (int i = 0; i < voxel.Properties.meshData.faces[p].vertData.Length; i++)
                 {
-                    vertices.Add(pos + voxel.Properties.meshData.faces[p].vertData[i].position);
+                    vertices.Add(pos + (float3)voxel.Properties.meshData.faces[p].vertData[i].position);
                     normals.Add(voxel.Properties.meshData.faces[p].normal);
                     AddTexture(voxel.Properties.GetTextureID(p), voxel.Properties.meshData.faces[p].vertData[i].uv);
                     faceVertCount++;
