@@ -620,6 +620,18 @@ PrefabInstance:
       propertyPath: m_VolumetricDimmer
       value: 0.7
       objectReference: {fileID: 0}
+    - target: {fileID: 7558371697509035949, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
+      propertyPath: m_AngularDiameter
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558371697509035949, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
+      propertyPath: m_InteractsWithSky
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558371697509035950, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
+      propertyPath: m_ShadowAngle
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7558371697509035951, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.24
@@ -732,6 +744,38 @@ PrefabInstance:
     - target: {fileID: 8737026440282011879, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540506, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_ShapeRadius
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540506, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_ShadowNearPlane
+      value: 0.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540506, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_UseContactShadow.m_Override
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_Intensity
+      value: 477.4648
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_ColorTemperature
+      value: 9217
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_UseColorTemperature
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_ShadowRadius
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8737026441203080330, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
       propertyPath: antialiasing
