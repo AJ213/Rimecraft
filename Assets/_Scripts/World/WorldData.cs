@@ -73,59 +73,31 @@ public class WorldData
         chunks[coord].Populate();
     }
 
-    public void SetVoxel(int3 pos, ushort value)
+    public void SetVoxel(int3 globalPosition, ushort value)
     {
-        if (!WorldHelper.IsInRange(pos, Constants.WorldSizeInVoxels))
-        {
-            return;
-        }
+        ChunkData chunk = RequestChunk(WorldHelper.GetChunkCoordFromPosition(globalPosition), true);
 
-        int x = Mathf.FloorToInt((float)pos.x / Constants.ChunkSizeX);
-        int y = Mathf.FloorToInt((float)pos.y / Constants.ChunkSizeY);
-        int z = Mathf.FloorToInt((float)pos.z / Constants.ChunkSizeZ);
-
-        x *= Constants.ChunkSizeX;
-        y *= Constants.ChunkSizeY;
-        z *= Constants.ChunkSizeZ;
-
-        ChunkData chunk = RequestChunk(new int3(x, y, z), true);
-
-        int3 voxel = new int3((pos.x - x), (pos.y - y), (pos.z - z));
+        int3 voxel = WorldHelper.GetVoxelLocalPositionInChunk(globalPosition);
 
         chunk.ModifyVoxel(voxel, value);
     }
 
-    public VoxelState GetVoxel(int3 pos)
+    public VoxelState GetVoxel(int3 globalPosition)
     {
-        if (!WorldHelper.IsInRange(pos, Constants.WorldSizeInVoxels))
-        {
-            return null;
-        }
-
-        int x = pos.x / Constants.ChunkSizeX;
-        int y = pos.y / Constants.ChunkSizeY;
-        int z = pos.z / Constants.ChunkSizeZ;
-
-        x *= Constants.ChunkSizeX;
-        y *= Constants.ChunkSizeY;
-        z *= Constants.ChunkSizeZ;
-
-        ChunkData chunk = RequestChunk(new int3(x, y, z), false);
-
+        ChunkData chunk = RequestChunk(WorldHelper.GetChunkCoordFromPosition(globalPosition), false);
         if (chunk == null)
         {
             return null;
         }
 
-        int3 voxel = new int3((pos.x - x), (pos.y - y), (pos.z - z));
+        int3 voxel = WorldHelper.GetVoxelLocalPositionInChunk(globalPosition);
         try
         {
             return chunk.map[voxel.x, voxel.y, voxel.z];
         }
         catch (System.Exception e)
         {
-            Debug.Log(pos.x + ", " + pos.y + ", " + pos.z);
-            Debug.Log(x + ", " + y + ", " + z);
+            Debug.Log(globalPosition.x + ", " + globalPosition.y + ", " + globalPosition.z);
             Debug.Log(voxel.x + ", " + voxel.y + ", " + voxel.z);
             throw e;
         }

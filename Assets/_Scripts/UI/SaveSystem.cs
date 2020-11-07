@@ -69,7 +69,7 @@ public static class SaveSystem
 
     public static void SaveChunk(ChunkData chunk, string worldName)
     {
-        string chunkName = chunk.Position.x + "-" + chunk.Position.y + "-" + chunk.Position.z;
+        string chunkName = chunk.Coord.x + "-" + chunk.Coord.y + "-" + chunk.Coord.z;
 
         string savePath = RimecraftWorld.Instance.appPath + "/save/" + worldName + "/chunks/";
         if (!Directory.Exists(savePath))

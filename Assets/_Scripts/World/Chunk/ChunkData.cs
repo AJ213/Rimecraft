@@ -6,31 +6,29 @@ using Unity.Mathematics;
 [System.Serializable]
 public class ChunkData
 {
-    private int x;
-    private int y;
-    private int z;
+    private int3 coord;
 
-    public int3 Position
+    public int3 Coord
     {
-        get { return new int3(x, y, z); }
+        get { return coord; }
         set
         {
-            x = value.x;
-            y = value.y;
-            z = value.z;
+            coord.x = value.x;
+            coord.y = value.y;
+            coord.z = value.z;
         }
     }
 
     public ChunkData(int3 pos)
     {
-        Position = pos;
+        Coord = pos;
     }
 
     public ChunkData(int x, int y, int z)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        coord.x = x;
+        coord.y = y;
+        coord.z = z;
     }
 
     [System.NonSerialized] public Chunk chunk;
@@ -46,17 +44,17 @@ public class ChunkData
             {
                 for (int z = 0; z < Constants.ChunkSizeZ; z++)
                 {
-                    int3 voxelGlobalPosition = new int3(x + this.Position.x, y + this.Position.y, z + this.Position.z);
+                    int3 voxelGlobalPosition = WorldHelper.GetVoxelGlobalPositionFromChunk(new int3(x, y, z), Coord);
                     map[x, y, z] = new VoxelState(RimecraftWorld.Instance.GetVoxel(voxelGlobalPosition), this, new int3(x, y, z));
 
                     for (int p = 0; p < 6; p++)
                     {
-                        int3 neighbourV3 = new int3(x, y, z) + VoxelData.faceChecks[p];
-                        if (WorldHelper.IsInRange(neighbourV3.x, Constants.ChunkSizeX) &&
-                            WorldHelper.IsInRange(neighbourV3.y, Constants.ChunkSizeY) &&
-                            WorldHelper.IsInRange(neighbourV3.z, Constants.ChunkSizeZ))
+                        int3 neighbourInt3 = new int3(x, y, z) + VoxelData.faceChecks[p];
+                        if (WorldHelper.IsInRange(neighbourInt3.x, Constants.ChunkSizeX) &&
+                            WorldHelper.IsInRange(neighbourInt3.y, Constants.ChunkSizeY) &&
+                            WorldHelper.IsInRange(neighbourInt3.z, Constants.ChunkSizeZ))
                         {
-                            map[x, y, z].neighbours[p] = VoxelFromV3Int(neighbourV3);
+                            map[x, y, z].neighbours[p] = VoxelFromPosition(neighbourInt3);
                         }
                         else
                         {
@@ -70,15 +68,14 @@ public class ChunkData
         RimecraftWorld.Instance.worldData.AddToModifiedChunkList(this);
     }
 
-    public void ModifyVoxel(int3 pos, ushort id)
+    public void ModifyVoxel(int3 localPosition, ushort id)
     {
-        if (map[pos.x, pos.y, pos.z] == null || map[pos.x, pos.y, pos.z].id == id)
+        if (map[localPosition.x, localPosition.y, localPosition.z].id == id)
         {
             return;
         }
 
-        VoxelState voxel = map[pos.x, pos.y, pos.z];
-        BlockType newVoxel = RimecraftWorld.Instance.blockTypes[id];
+        VoxelState voxel = map[localPosition.x, localPosition.y, localPosition.z];
 
         voxel.id = id;
         RimecraftWorld.Instance.worldData.AddToModifiedChunkList(this);
@@ -88,8 +85,8 @@ public class ChunkData
         }
     }
 
-    public VoxelState VoxelFromV3Int(int3 pos)
+    public VoxelState VoxelFromPosition(int3 localPosition)
     {
-        return map[pos.x, pos.y, pos.z];
+        return map[localPosition.x, localPosition.y, localPosition.z];
     }
 }

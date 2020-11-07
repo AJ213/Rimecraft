@@ -21,7 +21,7 @@ public class VoxelState
 
     public int3 GlobalPosition
     {
-        get { return new int3(position.x + chunkData.Position.x, position.y + chunkData.Position.y, position.z + chunkData.Position.z); }
+        get { return new int3(position.x + chunkData.Coord.x, position.y + chunkData.Coord.y, position.z + chunkData.Coord.z); }
     }
 
     public BlockType Properties

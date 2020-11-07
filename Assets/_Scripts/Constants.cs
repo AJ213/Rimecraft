@@ -9,8 +9,8 @@ public static class Constants
     public const int ChunkSizeY = 16;
     public const int ChunkSizeZ = 16;
 
-    public const int WorldSizeInChunks = 100; // 1 million
-    public static int WorldSizeInVoxels => WorldSizeInChunks * ChunkSizeX;
+    //public const int WorldSizeInChunks = 3; // 1 million
+    //public static int WorldSizeInVoxels => WorldSizeInChunks * ChunkSizeX;
 
     public static int2 ChunkSurfaceSize => new int2(ChunkSizeX, ChunkSizeZ);
     public static int3 ChunkSize => new int3(ChunkSizeX, ChunkSizeY, ChunkSizeZ);

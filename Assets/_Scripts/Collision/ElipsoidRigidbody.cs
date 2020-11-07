@@ -91,19 +91,19 @@ public class ElipsoidRigidbody : MonoBehaviour
         float widthAdjustment = (objectWidth);
         if (index == 0)
         {
-            return new int3(new float3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
+            return new int3(Mathf.FloorToInt(transform.position.x - widthAdjustment), Mathf.FloorToInt(transform.position.y + verticalOffset), Mathf.FloorToInt(transform.position.z - widthAdjustment));
         }
         else if (index == 1)
         {
-            return new int3(new float3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z - widthAdjustment));
+            return new int3(Mathf.FloorToInt(transform.position.x + widthAdjustment), Mathf.FloorToInt(transform.position.y + verticalOffset), Mathf.FloorToInt(transform.position.z - widthAdjustment));
         }
         else if (index == 2)
         {
-            return new int3(new float3(transform.position.x + widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
+            return new int3(Mathf.FloorToInt(transform.position.x + widthAdjustment), Mathf.FloorToInt(transform.position.y + verticalOffset), Mathf.FloorToInt(transform.position.z + widthAdjustment));
         }
         else
         {
-            return new int3(new float3(transform.position.x - widthAdjustment, transform.position.y + verticalOffset, transform.position.z + widthAdjustment));
+            return new int3(Mathf.FloorToInt(transform.position.x - widthAdjustment), Mathf.FloorToInt(transform.position.y + verticalOffset), Mathf.FloorToInt(transform.position.z + widthAdjustment));
         }
     }
 

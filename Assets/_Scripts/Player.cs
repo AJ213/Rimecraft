@@ -87,7 +87,7 @@ public class Player : MonoBehaviour
             // Destroy Block
             if (Input.GetMouseButtonDown(0))
             {
-                WorldHelper.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+                WorldHelper.GetChunkFromPosition(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
             }
 
             // Build Block
@@ -95,7 +95,7 @@ public class Player : MonoBehaviour
             {
                 if (toolbar.slots[toolbar.slotIndex].HasItem)
                 {
-                    WorldHelper.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
+                    WorldHelper.GetChunkFromPosition(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
                     toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
                 }
             }
@@ -112,15 +112,16 @@ public class Player : MonoBehaviour
     private void PlaceCursorBlock()
     {
         float step = checkIncrement;
-        Vector3 lastPos = new Vector3();
+        float3 lastPos = new Vector3();
 
         while (step < reach)
         {
-            float3 pos = cam.position + (cam.forward * step);
+            float3 position = cam.position + (cam.forward * step);
+            int3 roundedPosition = new int3(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z));
 
-            if (RimecraftWorld.Instance.CheckForVoxel(new int3(pos)) != 0)
+            if (RimecraftWorld.Instance.CheckForVoxel(roundedPosition) != 0)
             {
-                highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+                highlightBlock.position = new float3(roundedPosition);
                 placeBlock.position = lastPos;
 
                 highlightBlock.gameObject.SetActive(true);
@@ -129,7 +130,7 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+            lastPos = new float3(roundedPosition);
 
             step += checkIncrement;
         }

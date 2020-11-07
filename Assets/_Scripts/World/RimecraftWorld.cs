@@ -20,9 +20,9 @@ public class RimecraftWorld : MonoBehaviour
     [HideInInspector]
     public Dictionary<int3, Chunk> chunks = new Dictionary<int3, Chunk>();
 
-    private List<ChunkCoord> activeChunks = new List<ChunkCoord>();
-    public ChunkCoord playerChunkCoord;
-    private ChunkCoord playerLastChunkCoord;
+    private List<int3> activeChunks = new List<int3>();
+    public int3 playerChunkCoord;
+    private int3 playerLastChunkCoord;
 
     private List<Chunk> chunksToUpdate = new List<Chunk>();
     public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
@@ -66,21 +66,21 @@ public class RimecraftWorld : MonoBehaviour
         Camera.main.farClipPlane = Mathf.Sqrt(2) * Constants.ChunkSizeX * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
-        spawnPosition = new Vector3(Constants.WorldSizeInVoxels / 2, Constants.WorldSizeInVoxels - 100, Constants.WorldSizeInVoxels / 2);
+        spawnPosition = new Vector3(0, 0, 0);
         player.position = spawnPosition;
-        //CheckLoadDistance();
+        CheckLoadDistance();
         CheckViewDistance();
 
-        playerLastChunkCoord = WorldHelper.GetChunkCoordFromVector3(player.position);
+        playerLastChunkCoord = WorldHelper.GetChunkCoordFromPosition(player.position);
     }
 
     private void Update()
     {
-        playerChunkCoord = WorldHelper.GetChunkCoordFromVector3(player.position);
+        playerChunkCoord = WorldHelper.GetChunkCoordFromPosition(player.position);
 
         if (!playerChunkCoord.Equals(playerLastChunkCoord))
         {
-            //CheckLoadDistance();
+            CheckLoadDistance();
             CheckViewDistance();
         }
 
@@ -107,16 +107,16 @@ public class RimecraftWorld : MonoBehaviour
 
     private void LoadWorld()
     {
-        for (int x = (Constants.WorldSizeInChunks / 2) - settings.loadDistance; x < (Constants.WorldSizeInChunks / 2) + settings.loadDistance; x++)
-        {
-            for (int y = (Constants.WorldSizeInChunks / 2) - settings.loadDistance; y < (Constants.WorldSizeInChunks / 2) + settings.loadDistance; y++)
-            {
-                for (int z = (Constants.WorldSizeInChunks / 2) - settings.loadDistance; z < (Constants.WorldSizeInChunks / 2) + settings.loadDistance; z++)
-                {
-                    worldData.LoadChunk(new int3(x, y, z));
-                }
-            }
-        }
+        /* for (int x = -Constants.WorldSizeInChunks / 2; x < Constants.WorldSizeInChunks / 2; x++)
+         {
+             for (int y = -Constants.WorldSizeInChunks; y < 0; y++)
+             {
+                 for (int z = -Constants.WorldSizeInChunks / 2; z < Constants.WorldSizeInChunks / 2; z++)
+                 {
+                     worldData.LoadChunk(new int3(x, y, z));
+                 }
+             }
+         }*/
     }
 
     public void AddChunkToUpdate(Chunk chunk)
@@ -173,10 +173,10 @@ public class RimecraftWorld : MonoBehaviour
 
     private void CheckViewDistance()
     {
-        ChunkCoord coord = WorldHelper.GetChunkCoordFromVector3(player.position);
+        int3 coord = WorldHelper.GetChunkCoordFromPosition(player.position);
         playerLastChunkCoord = playerChunkCoord;
 
-        List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);
+        List<int3> previouslyActiveChunks = new List<int3>(activeChunks);
 
         activeChunks.Clear();
 
@@ -187,26 +187,19 @@ public class RimecraftWorld : MonoBehaviour
             {
                 for (int z = coord.z - settings.viewDistanceInChunks; z < coord.z + settings.viewDistanceInChunks; z++)
                 {
-                    ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
-
-                    // If the current chunk is in the world...
-                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), Constants.WorldSizeInChunks))
+                    int3 location = new int3(x, y, z);
+                    if (!chunks.ContainsKey(location))
                     {
-                        // Check if it active, if not, activate it.
-                        int3 location = new int3(x, y, z);
-                        if (!chunks.ContainsKey(location))
-                        {
-                            chunks[location] = new Chunk(thisChunkCoord);
-                        }
-
-                        chunks[location].IsActive = true;
-                        activeChunks.Add(thisChunkCoord);
+                        chunks[location] = new Chunk(location);
                     }
+
+                    chunks[location].IsActive = true;
+                    activeChunks.Add(location);
 
                     // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
                     for (int i = 0; i < previouslyActiveChunks.Count; i++)
                     {
-                        if (previouslyActiveChunks[i].Equals(thisChunkCoord))
+                        if (previouslyActiveChunks[i].Equals(location))
                         {
                             previouslyActiveChunks.RemoveAt(i);
                         }
@@ -216,7 +209,7 @@ public class RimecraftWorld : MonoBehaviour
         }
 
         // Any chunks left in the previousActiveChunks list are no longer in the player's view distance, so loop through and disable them.
-        foreach (ChunkCoord c in previouslyActiveChunks)
+        foreach (int3 c in previouslyActiveChunks)
         {
             chunks[new int3(c.x, c.y, c.z)].IsActive = false;
         }
@@ -224,60 +217,31 @@ public class RimecraftWorld : MonoBehaviour
 
     private void CheckLoadDistance()
     {
-        ChunkCoord coord = WorldHelper.GetChunkCoordFromVector3(player.position);
+        int3 coord = WorldHelper.GetChunkCoordFromPosition(player.position);
         playerLastChunkCoord = playerChunkCoord;
 
-        List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);
-
-        activeChunks.Clear();
-
-        // Loop through all chunks currently within view distance of the player.
         for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
         {
-            for (int y = coord.y - settings.viewDistanceInChunks; y < coord.y + settings.viewDistanceInChunks; y++)
+            for (int y = coord.y - settings.loadDistance; y < coord.y + settings.viewDistanceInChunks; y++)
             {
                 for (int z = coord.z - settings.loadDistance; z < coord.z + settings.loadDistance; z++)
                 {
-                    ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
-
-                    // If the current chunk is in the world...
-                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), Constants.WorldSizeInChunks))
+                    int3 location = new int3(x, y, z);
+                    if (!chunks.ContainsKey(location))
                     {
-                        // Check if it active, if not, activate it.
-                        int3 location = new int3(x, y, z);
-                        if (!chunks.ContainsKey(location))
-                        {
-                            chunks[location] = new Chunk(thisChunkCoord);
-                        }
-
-                        chunks[location].IsActive = true;
-                        activeChunks.Add(thisChunkCoord);
-                    }
-
-                    // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
-                    for (int i = 0; i < previouslyActiveChunks.Count; i++)
-                    {
-                        if (previouslyActiveChunks[i].Equals(thisChunkCoord))
-                        {
-                            previouslyActiveChunks.RemoveAt(i);
-                        }
+                        worldData.LoadChunk(location);
                     }
                 }
             }
         }
-
-        // Any chunks left in the previousActiveChunks list are no longer in the player's view distance, so loop through and disable them.
-        foreach (ChunkCoord c in previouslyActiveChunks)
-        {
-            chunks[new int3(c.x, c.y, c.z)].IsActive = false;
-        }
     }
 
-    public ushort CheckForVoxel(int3 pos)
+    public ushort CheckForVoxel(int3 globalPosition)
     {
-        VoxelState voxel = worldData.GetVoxel(pos);
+        VoxelState voxel = worldData.GetVoxel(globalPosition);
         if (voxel == null)
         {
+            Debug.Log("Null block");
             return 0;
         }
 
@@ -291,9 +255,9 @@ public class RimecraftWorld : MonoBehaviour
         }
     }
 
-    public VoxelState GetVoxelState(int3 pos)
+    public VoxelState GetVoxelState(int3 globalPosition)
     {
-        return worldData.GetVoxel(pos);
+        return worldData.GetVoxel(globalPosition);
     }
 
     public bool InUI
@@ -315,23 +279,17 @@ public class RimecraftWorld : MonoBehaviour
         }
     }
 
-    public ushort GetVoxel(int3 pos)
+    public ushort GetVoxel(int3 globalPosition)
     {
         /* IMMUTABLE PASS */
 
         // If outside word, return air.
-        if (!WorldHelper.IsInRange(pos, Constants.WorldSizeInVoxels))
-        {
-            return 0;
-        }
+        /*        if (!WorldHelper.IsInRange(pos, Constants.WorldSizeInVoxels))
+                {
+                    return 0;
+                }*/
 
-        // Bottom of world that is unbreakable.
-        if (pos.y == 0)
-        {
-            return 2;
-        }
-
-        int solidGroundHeight = Constants.WorldSizeInVoxels - 150;
+        int solidGroundHeight = 0;
         float sumOfHeights = 0;
         int count = 0;
         float strongestWeight = 0;
@@ -339,7 +297,7 @@ public class RimecraftWorld : MonoBehaviour
 
         for (int i = 0; i < biomes.Length; i++)
         {
-            float weight = Noise.Get2DSimplex(new Vector2(pos.x, pos.z), biomes[i].offset, biomes[i].scale);
+            float weight = Noise.Get2DSimplex(new Vector2(globalPosition.x, globalPosition.z), biomes[i].offset, biomes[i].scale);
 
             // Keep track of which weight is strongest.
             if (weight > strongestWeight)
@@ -349,7 +307,7 @@ public class RimecraftWorld : MonoBehaviour
             }
 
             // Get the height of the terrain (for the current biome) and multiply it by its weight.
-            float height = biomes[i].terrainHeight * Noise.Get2DSimplex(new Vector2(pos.x, pos.z), 2 * biomes[i].offset, biomes[i].terrainScale) * weight;
+            float height = biomes[i].terrainHeight * Noise.Get2DSimplex(new Vector2(globalPosition.x, globalPosition.z), 2 * biomes[i].offset, biomes[i].terrainScale) * weight;
 
             // If the height value is greater 0 add it to the sum of heights.
             if (height > 0)
@@ -372,24 +330,24 @@ public class RimecraftWorld : MonoBehaviour
         int terrainHeight = Mathf.FloorToInt(sumOfHeights + solidGroundHeight);
         ushort voxelValue = 0;
 
-        SurfaceBlocks(ref voxelValue, pos, biome, terrainHeight);
-        LodeGeneration(ref voxelValue, pos, biome);
-        FloraGeneration(pos, biome, terrainHeight);
+        SurfaceBlocks(ref voxelValue, globalPosition, biome, terrainHeight);
+        LodeGeneration(ref voxelValue, globalPosition, biome);
+        FloraGeneration(globalPosition, biome, terrainHeight);
 
         return voxelValue;
     }
 
-    private void SurfaceBlocks(ref ushort voxelValue, int3 pos, BiomeAttributes biome, int terrainHeight)
+    private void SurfaceBlocks(ref ushort voxelValue, int3 globalPosition, BiomeAttributes biome, int terrainHeight)
     {
-        if (pos.y == terrainHeight)
+        if (globalPosition.y == terrainHeight)
         {
             voxelValue = biome.surfaceBlock;
         }
-        else if (pos.y < terrainHeight && pos.y > terrainHeight - 4)
+        else if (globalPosition.y < terrainHeight && globalPosition.y > terrainHeight - 4)
         {
             voxelValue = biome.subSurfaceBlock;
         }
-        else if (pos.y > terrainHeight)
+        else if (globalPosition.y > terrainHeight)
         {
             voxelValue = 0;
         }
@@ -399,15 +357,15 @@ public class RimecraftWorld : MonoBehaviour
         }
     }
 
-    private void LodeGeneration(ref ushort voxelValue, int3 pos, BiomeAttributes biome)
+    private void LodeGeneration(ref ushort voxelValue, int3 globalPosition, BiomeAttributes biome)
     {
         if (voxelValue == 3 || voxelValue == 1)
         {
             foreach (Lode lode in biome.lodes)
             {
-                if (pos.y > lode.minHeight && pos.y < lode.maxHeight)
+                if (globalPosition.y > lode.minHeight && globalPosition.y < lode.maxHeight)
                 {
-                    if (Noise.Get3DSimplex(pos, lode.noiseOffset, lode.scale) > lode.threshold)
+                    if (Noise.Get3DSimplex(globalPosition, lode.noiseOffset, lode.scale) > lode.threshold)
                     {
                         voxelValue = lode.blockID;
                     }
@@ -416,15 +374,15 @@ public class RimecraftWorld : MonoBehaviour
         }
     }
 
-    private void FloraGeneration(int3 pos, BiomeAttributes biome, int terrainHeight)
+    private void FloraGeneration(int3 globalPosition, BiomeAttributes biome, int terrainHeight)
     {
-        if (pos.y == terrainHeight && biome.placeMajorFlora)
+        if (globalPosition.y == terrainHeight && biome.placeMajorFlora)
         {
-            if (Noise.Get2DSimplex(new Vector2(pos.x, pos.z), 200, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
+            if (Noise.Get2DSimplex(new Vector2(globalPosition.x, globalPosition.z), 200, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
             {
-                if (Noise.Get2DSimplex(new Vector2(pos.x, pos.z), 700, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
+                if (Noise.Get2DSimplex(new Vector2(globalPosition.x, globalPosition.z), 700, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
                 {
-                    modifications.Enqueue(Structure.GenerateMajorFlora(biome.majorFloraIndex, pos, biome.minHeight, biome.maxHeight));
+                    modifications.Enqueue(Structure.GenerateMajorFlora(biome.majorFloraIndex, globalPosition, biome.minHeight, biome.maxHeight));
                 }
             }
         }

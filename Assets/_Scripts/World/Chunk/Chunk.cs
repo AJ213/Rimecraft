@@ -5,8 +5,6 @@ using Unity.Mathematics;
 
 public class Chunk
 {
-    public ChunkCoord coord;
-
     private GameObject chunkObject;
     private MeshRenderer meshRenderer = null;
     private MeshFilter meshFilter = null;
@@ -19,13 +17,14 @@ public class Chunk
     private List<Vector2> uvs = new List<Vector2>();
     private List<Vector3> normals = new List<Vector3>();
 
+    public int3 coord;
     public int3 position;
 
     private bool isActive;
 
     private ChunkData chunkData;
 
-    public Chunk(ChunkCoord coord)
+    public Chunk(int3 coord)
     {
         this.coord = coord;
 
@@ -42,7 +41,7 @@ public class Chunk
         chunkObject.name = "Chunk " + coord.x + ", " + coord.y + "," + coord.z;
         position = (int3)(float3)chunkObject.transform.position;
 
-        chunkData = RimecraftWorld.Instance.worldData.RequestChunk(new int3(position.x, position.y, position.z), true);
+        chunkData = RimecraftWorld.Instance.worldData.RequestChunk(coord, true);
         chunkData.chunk = this;
 
         RimecraftWorld.Instance.AddChunkToUpdate(this);
@@ -68,56 +67,41 @@ public class Chunk
         RimecraftWorld.Instance.chunksToDraw.Enqueue(this);
     }
 
-    public void EditVoxel(Vector3 pos, ushort newID)
+    public void EditVoxel(float3 globalPosition, ushort newID)
     {
-        int xCheck = Mathf.FloorToInt(pos.x);
-        int yCheck = Mathf.FloorToInt(pos.y);
-        int zCheck = Mathf.FloorToInt(pos.z);
+        chunkData.ModifyVoxel(WorldHelper.GetVoxelLocalPositionInChunk(globalPosition), newID);
 
-        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
-        yCheck -= Mathf.FloorToInt(chunkObject.transform.position.y);
-        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
-
-        chunkData.ModifyVoxel(new int3(xCheck, yCheck, zCheck), newID);
-
-        UpdateSorroundingVoxels(xCheck, yCheck, zCheck);
+        UpdateSorroundingVoxels(new int3(Mathf.FloorToInt(globalPosition.x),
+                                Mathf.FloorToInt(globalPosition.y),
+                                Mathf.FloorToInt(globalPosition.z)));
     }
 
-    private void UpdateSorroundingVoxels(int x, int y, int z)
+    private void UpdateSorroundingVoxels(int3 globalPosition)
     {
-        int3 thisVoxel = new int3(x, y, z);
         for (int p = 0; p < 6; p++)
         {
-            int3 currentVoxel = thisVoxel + VoxelData.faceChecks[p];
+            int3 currentVoxel = globalPosition + VoxelData.faceChecks[p];
 
-            if (!WorldHelper.IsInRange(currentVoxel.x, Constants.ChunkSizeX) &&
-                !WorldHelper.IsInRange(currentVoxel.y, Constants.ChunkSizeY) &&
-                !WorldHelper.IsInRange(currentVoxel.z, Constants.ChunkSizeZ) &&
-                WorldHelper.IsInRange(currentVoxel + position, Constants.WorldSizeInVoxels))
+            if (!WorldHelper.IsVoxelGlobalPositionInChunk(currentVoxel, coord))
             {
-                RimecraftWorld.Instance.AddChunkToUpdate(WorldHelper.GetChunkFromVector3((float3)(currentVoxel + position)), true);
+                RimecraftWorld.Instance.AddChunkToUpdate(WorldHelper.GetChunkFromPosition(currentVoxel), true);
             }
         }
     }
 
-    public VoxelState GetVoxelFromGlobalVector3(int3 pos)
+    private void UpdateMeshData(int3 localPosition)
     {
-        return chunkData.map[pos.x - position.x, pos.y - position.y, pos.z - position.z];
-    }
-
-    private void UpdateMeshData(int3 pos)
-    {
-        VoxelState voxel = chunkData.map[pos.x, pos.y, pos.z];
+        VoxelState voxel = chunkData.map[localPosition.x, localPosition.y, localPosition.z];
 
         for (int p = 0; p < 6; p++)
         {
-            VoxelState neighbour = chunkData.map[pos.x, pos.y, pos.z].neighbours[p];
+            VoxelState neighbour = chunkData.map[localPosition.x, localPosition.y, localPosition.z].neighbours[p];
             if (neighbour != null && neighbour.Properties.renderNeightborFaces)
             {
                 int faceVertCount = 0;
                 for (int i = 0; i < voxel.Properties.meshData.faces[p].vertData.Length; i++)
                 {
-                    vertices.Add(pos + (float3)voxel.Properties.meshData.faces[p].vertData[i].position);
+                    vertices.Add(localPosition + (float3)voxel.Properties.meshData.faces[p].vertData[i].position);
                     normals.Add(voxel.Properties.meshData.faces[p].normal);
                     AddTexture(voxel.Properties.GetTextureID(p), voxel.Properties.meshData.faces[p].vertData[i].uv);
                     faceVertCount++;
