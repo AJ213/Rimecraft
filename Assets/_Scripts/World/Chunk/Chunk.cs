@@ -39,7 +39,7 @@ public class Chunk
         chunkObject.transform.SetParent(RimecraftWorld.Instance.transform);
         chunkObject.transform.position = new Vector3(coord.x * Constants.ChunkSizeX, coord.y * Constants.ChunkSizeY, coord.z * Constants.ChunkSizeZ);
         chunkObject.name = "Chunk " + coord.x + ", " + coord.y + "," + coord.z;
-        position = (int3)(float3)chunkObject.transform.position;
+        position = new int3(Mathf.FloorToInt(chunkObject.transform.position.x), Mathf.FloorToInt(chunkObject.transform.position.y), Mathf.FloorToInt(chunkObject.transform.position.z));
 
         chunkData = RimecraftWorld.Instance.worldData.RequestChunk(coord, true);
         chunkData.chunk = this;

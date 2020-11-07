@@ -41,7 +41,7 @@ public class DebugScreen : MonoBehaviour
 
         if (timer > 1)
         {
-            frameRate = (int)(1 / Time.unscaledDeltaTime);
+            frameRate = Mathf.FloorToInt(1 / Time.unscaledDeltaTime);
             timer = 0;
         }
         else

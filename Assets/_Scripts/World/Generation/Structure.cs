@@ -20,7 +20,7 @@ public static class Structure
     {
         Queue<VoxelMod> queue = new Queue<VoxelMod>();
 
-        int height = (int)(maxTrunkHeight * Noise.Get2DSimplex(new int2(position.x, position.z), 222, 3));
+        int height = Mathf.FloorToInt(maxTrunkHeight * Noise.Get2DSimplex(new int2(position.x, position.z), 222, 3));
 
         if (height < minTrunkHeight)
         {

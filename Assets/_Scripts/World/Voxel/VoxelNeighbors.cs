@@ -21,7 +21,7 @@ public class VoxelNeighbors
         {
             if (neighbors[index] == null)
             {
-                neighbors[index] = RimecraftWorld.Instance.worldData.GetVoxel(parent.GlobalPosition + VoxelData.faceChecks[index]);
+                neighbors[index] = RimecraftWorld.Instance.worldData.GetVoxel(WorldHelper.GetVoxelGlobalPositionFromChunk(parent.position, parent.chunkData.Coord) + VoxelData.faceChecks[index]);
                 ReturnNeighbour(index);
             }
             return neighbors[index];

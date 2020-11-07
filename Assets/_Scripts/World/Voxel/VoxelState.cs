@@ -19,11 +19,6 @@ public class VoxelState
         this.position = position;
     }
 
-    public int3 GlobalPosition
-    {
-        get { return new int3(position.x + chunkData.Coord.x, position.y + chunkData.Coord.y, position.z + chunkData.Coord.z); }
-    }
-
     public BlockType Properties
     {
         get { return RimecraftWorld.Instance.blockTypes[id]; }
