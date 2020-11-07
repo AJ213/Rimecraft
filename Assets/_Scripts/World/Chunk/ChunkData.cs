@@ -36,15 +36,15 @@ public class ChunkData
     [System.NonSerialized] public Chunk chunk;
 
     [HideInInspector]
-    public VoxelState[,,] map = new VoxelState[VoxelData.ChunkWidth, VoxelData.ChunkWidth, VoxelData.ChunkWidth];
+    public VoxelState[,,] map = new VoxelState[Constants.ChunkSizeX, Constants.ChunkSizeY, Constants.ChunkSizeZ];
 
     public void Populate()
     {
-        for (int y = 0; y < VoxelData.ChunkWidth; y++)
+        for (int y = 0; y < Constants.ChunkSizeX; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < Constants.ChunkSizeY; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < Constants.ChunkSizeZ; z++)
                 {
                     int3 voxelGlobalPosition = new int3(x + this.Position.x, y + this.Position.y, z + this.Position.z);
                     map[x, y, z] = new VoxelState(RimecraftWorld.Instance.GetVoxel(voxelGlobalPosition), this, new int3(x, y, z));
@@ -52,7 +52,9 @@ public class ChunkData
                     for (int p = 0; p < 6; p++)
                     {
                         int3 neighbourV3 = new int3(x, y, z) + VoxelData.faceChecks[p];
-                        if (WorldHelper.IsInRange(neighbourV3, VoxelData.ChunkWidth))
+                        if (WorldHelper.IsInRange(neighbourV3.x, Constants.ChunkSizeX) &&
+                            WorldHelper.IsInRange(neighbourV3.y, Constants.ChunkSizeY) &&
+                            WorldHelper.IsInRange(neighbourV3.z, Constants.ChunkSizeZ))
                         {
                             map[x, y, z].neighbours[p] = VoxelFromV3Int(neighbourV3);
                         }

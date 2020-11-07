@@ -628,6 +628,10 @@ PrefabInstance:
       propertyPath: m_InteractsWithSky
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7558371697509035949, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
+      propertyPath: m_PenumbraTint
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7558371697509035950, guid: 1ce95a1e7853ab74f9d385654f222d31, type: 3}
       propertyPath: m_ShadowAngle
       value: 0.5

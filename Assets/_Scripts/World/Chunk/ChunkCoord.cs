@@ -18,9 +18,9 @@ public struct ChunkCoord
 
     public ChunkCoord(int3 pos)
     {
-        x = (int)((float)pos.x / VoxelData.ChunkWidth);
-        y = (int)((float)pos.y / VoxelData.ChunkWidth);
-        z = (int)((float)pos.z / VoxelData.ChunkWidth);
+        x = (int)((float)pos.x / Constants.ChunkSizeX);
+        y = (int)((float)pos.y / Constants.ChunkSizeY);
+        z = (int)((float)pos.z / Constants.ChunkSizeZ);
     }
 
     public int3 ToInt3()

@@ -1,0 +1,20 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEngine;
+
+public static class Constants
+{
+    public const int ChunkSizeX = 16;
+    public const int ChunkSizeY = 16;
+    public const int ChunkSizeZ = 16;
+
+    public const int WorldSizeInChunks = 100; // 1 million
+    public static int WorldSizeInVoxels => WorldSizeInChunks * ChunkSizeX;
+
+    public static int2 ChunkSurfaceSize => new int2(ChunkSizeX, ChunkSizeZ);
+    public static int3 ChunkSize => new int3(ChunkSizeX, ChunkSizeY, ChunkSizeZ);
+
+    public const int ChunkVolume = ChunkSizeX * ChunkSizeY * ChunkSizeZ;
+    public const int ChunkSurfaceVolume = ChunkSizeX * ChunkSizeZ;
+}

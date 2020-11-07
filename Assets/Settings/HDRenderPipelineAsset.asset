@@ -210,8 +210,8 @@ MonoBehaviour:
     supportCustomPass: 1
     customBufferFormat: 12
     supportedLitShaderMode: 3
-    supportDecals: 1
-    msaaSampleCount: 4
+    supportDecals: 0
+    msaaSampleCount: 1
     supportMotionVectors: 1
     supportRuntimeDebugDisplay: 1
     supportDitheringCrossFade: 1

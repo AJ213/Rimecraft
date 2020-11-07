@@ -2,6 +2,8 @@
 using System.IO;
 using UnityEngine;
 using Unity.Mathematics;
+using Unity.Entities;
+using System.Linq;
 
 public class RimecraftWorld : MonoBehaviour
 {
@@ -16,7 +18,7 @@ public class RimecraftWorld : MonoBehaviour
     public BlockType[] blockTypes = null;
 
     [HideInInspector]
-    public Chunk[,,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
+    public Dictionary<int3, Chunk> chunks = new Dictionary<int3, Chunk>();
 
     private List<ChunkCoord> activeChunks = new List<ChunkCoord>();
     public ChunkCoord playerChunkCoord;
@@ -61,10 +63,10 @@ public class RimecraftWorld : MonoBehaviour
         worldData = SaveSystem.LoadWorld("Prototype");
 
         UnityEngine.Random.InitState(VoxelData.seed);
-        Camera.main.farClipPlane = Mathf.Sqrt(2) * VoxelData.ChunkWidth * 2 * settings.viewDistanceInChunks;
+        Camera.main.farClipPlane = Mathf.Sqrt(2) * Constants.ChunkSizeX * 2 * settings.viewDistanceInChunks;
         LoadWorld();
 
-        spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.WorldSizeInVoxels - 100, VoxelData.WorldSizeInVoxels / 2);
+        spawnPosition = new Vector3(Constants.WorldSizeInVoxels / 2, Constants.WorldSizeInVoxels - 100, Constants.WorldSizeInVoxels / 2);
         player.position = spawnPosition;
         //CheckLoadDistance();
         CheckViewDistance();
@@ -105,11 +107,11 @@ public class RimecraftWorld : MonoBehaviour
 
     private void LoadWorld()
     {
-        for (int x = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; x < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; x++)
+        for (int x = (Constants.WorldSizeInChunks / 2) - settings.loadDistance; x < (Constants.WorldSizeInChunks / 2) + settings.loadDistance; x++)
         {
-            for (int y = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; y < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; y++)
+            for (int y = (Constants.WorldSizeInChunks / 2) - settings.loadDistance; y < (Constants.WorldSizeInChunks / 2) + settings.loadDistance; y++)
             {
-                for (int z = (VoxelData.WorldSizeInChunks / 2) - settings.loadDistance; z < (VoxelData.WorldSizeInChunks / 2) + settings.loadDistance; z++)
+                for (int z = (Constants.WorldSizeInChunks / 2) - settings.loadDistance; z < (Constants.WorldSizeInChunks / 2) + settings.loadDistance; z++)
                 {
                     worldData.LoadChunk(new int3(x, y, z));
                 }
@@ -188,15 +190,16 @@ public class RimecraftWorld : MonoBehaviour
                     ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
 
                     // If the current chunk is in the world...
-                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), VoxelData.WorldSizeInChunks))
+                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), Constants.WorldSizeInChunks))
                     {
                         // Check if it active, if not, activate it.
-                        if (chunks[x, y, z] == null)
+                        int3 location = new int3(x, y, z);
+                        if (!chunks.ContainsKey(location))
                         {
-                            chunks[x, y, z] = new Chunk(thisChunkCoord);
+                            chunks[location] = new Chunk(thisChunkCoord);
                         }
 
-                        chunks[x, y, z].IsActive = true;
+                        chunks[location].IsActive = true;
                         activeChunks.Add(thisChunkCoord);
                     }
 
@@ -215,7 +218,7 @@ public class RimecraftWorld : MonoBehaviour
         // Any chunks left in the previousActiveChunks list are no longer in the player's view distance, so loop through and disable them.
         foreach (ChunkCoord c in previouslyActiveChunks)
         {
-            chunks[c.x, c.y, c.z].IsActive = false;
+            chunks[new int3(c.x, c.y, c.z)].IsActive = false;
         }
     }
 
@@ -238,15 +241,16 @@ public class RimecraftWorld : MonoBehaviour
                     ChunkCoord thisChunkCoord = new ChunkCoord(x, y, z);
 
                     // If the current chunk is in the world...
-                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), VoxelData.WorldSizeInChunks))
+                    if (WorldHelper.IsInRange(thisChunkCoord.ToInt3(), Constants.WorldSizeInChunks))
                     {
                         // Check if it active, if not, activate it.
-                        if (chunks[x, y, z] == null)
+                        int3 location = new int3(x, y, z);
+                        if (!chunks.ContainsKey(location))
                         {
-                            chunks[x, y, z] = new Chunk(thisChunkCoord);
+                            chunks[location] = new Chunk(thisChunkCoord);
                         }
 
-                        chunks[x, y, z].IsActive = true;
+                        chunks[location].IsActive = true;
                         activeChunks.Add(thisChunkCoord);
                     }
 
@@ -265,7 +269,7 @@ public class RimecraftWorld : MonoBehaviour
         // Any chunks left in the previousActiveChunks list are no longer in the player's view distance, so loop through and disable them.
         foreach (ChunkCoord c in previouslyActiveChunks)
         {
-            chunks[c.x, c.y, c.z].IsActive = false;
+            chunks[new int3(c.x, c.y, c.z)].IsActive = false;
         }
     }
 
@@ -316,7 +320,7 @@ public class RimecraftWorld : MonoBehaviour
         /* IMMUTABLE PASS */
 
         // If outside word, return air.
-        if (!WorldHelper.IsInRange(pos, VoxelData.WorldSizeInVoxels))
+        if (!WorldHelper.IsInRange(pos, Constants.WorldSizeInVoxels))
         {
             return 0;
         }
@@ -327,7 +331,7 @@ public class RimecraftWorld : MonoBehaviour
             return 2;
         }
 
-        int solidGroundHeight = VoxelData.WorldSizeInVoxels - 150;
+        int solidGroundHeight = Constants.WorldSizeInVoxels - 150;
         float sumOfHeights = 0;
         int count = 0;
         float strongestWeight = 0;

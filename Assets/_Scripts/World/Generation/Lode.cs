@@ -8,7 +8,7 @@ public class Lode
     public string nodeName;
     public ushort blockID;
     public int minHeight = 5;
-    public int maxHeight = VoxelData.WorldSizeInVoxels - 200;
+    public int maxHeight = Constants.WorldSizeInVoxels - 200;
     public float scale;
     public float threshold;
     public float noiseOffset;

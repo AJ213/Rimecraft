@@ -38,7 +38,7 @@ public class Chunk
         meshRenderer.materials = materials;
 
         chunkObject.transform.SetParent(RimecraftWorld.Instance.transform);
-        chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, coord.y * VoxelData.ChunkWidth, coord.z * VoxelData.ChunkWidth);
+        chunkObject.transform.position = new Vector3(coord.x * Constants.ChunkSizeX, coord.y * Constants.ChunkSizeY, coord.z * Constants.ChunkSizeZ);
         chunkObject.name = "Chunk " + coord.x + ", " + coord.y + "," + coord.z;
         position = (int3)(float3)chunkObject.transform.position;
 
@@ -52,11 +52,11 @@ public class Chunk
     {
         ClearMeshData();
 
-        for (int y = 0; y < VoxelData.ChunkWidth; y++)
+        for (int y = 0; y < Constants.ChunkSizeY; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth; x++)
+            for (int x = 0; x < Constants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth; z++)
+                for (int z = 0; z < Constants.ChunkSizeZ; z++)
                 {
                     if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
                     {
@@ -90,7 +90,10 @@ public class Chunk
         {
             int3 currentVoxel = thisVoxel + VoxelData.faceChecks[p];
 
-            if (!WorldHelper.IsInRange(currentVoxel, VoxelData.ChunkWidth) && WorldHelper.IsInRange(currentVoxel + position, VoxelData.WorldSizeInVoxels))
+            if (!WorldHelper.IsInRange(currentVoxel.x, Constants.ChunkSizeX) &&
+                !WorldHelper.IsInRange(currentVoxel.y, Constants.ChunkSizeY) &&
+                !WorldHelper.IsInRange(currentVoxel.z, Constants.ChunkSizeZ) &&
+                WorldHelper.IsInRange(currentVoxel + position, Constants.WorldSizeInVoxels))
             {
                 RimecraftWorld.Instance.AddChunkToUpdate(WorldHelper.GetChunkFromVector3((float3)(currentVoxel + position)), true);
             }

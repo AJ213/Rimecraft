@@ -8,7 +8,7 @@ public static class Noise
         position.x += offset + VoxelData.seed;
         position.y += offset + VoxelData.seed;
 
-        float simplexNoise = noise.snoise(new float2(position.x / VoxelData.ChunkWidth * scale, position.y / VoxelData.ChunkWidth * scale));
+        float simplexNoise = noise.snoise(new float2(position.x / Constants.ChunkSizeX * scale, position.y / Constants.ChunkSizeZ * scale));
         return simplexNoise;
     }
 
