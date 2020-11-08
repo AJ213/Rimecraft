@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
 public static class Structure
 {
-    public static Queue<VoxelMod> GenerateMajorFlora(int index, int3 position, int minTrunkHeight, int maxTrunkHeight)
+    public static ConcurrentQueue<VoxelMod> GenerateMajorFlora(int index, int3 position, int minTrunkHeight, int maxTrunkHeight)
     {
         switch (index)
         {
@@ -12,13 +13,13 @@ public static class Structure
                 return MakeTree(position, minTrunkHeight, maxTrunkHeight);
 
             default:
-                return new Queue<VoxelMod>();
+                return new ConcurrentQueue<VoxelMod>();
         }
     }
 
-    public static Queue<VoxelMod> MakeTree(int3 position, int minTrunkHeight, int maxTrunkHeight)
+    public static ConcurrentQueue<VoxelMod> MakeTree(int3 position, int minTrunkHeight, int maxTrunkHeight)
     {
-        Queue<VoxelMod> queue = new Queue<VoxelMod>();
+        ConcurrentQueue<VoxelMod> queue = new ConcurrentQueue<VoxelMod>();
 
         int height = Mathf.FloorToInt(maxTrunkHeight * Noise.Get2DSimplex(new int2(position.x, position.z), 222, 3));
 

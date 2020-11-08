@@ -6,6 +6,7 @@ using Unity.Entities;
 using System.Linq;
 using Unity.Jobs;
 using Unity.Collections;
+using System.Collections.Concurrent;
 
 public class RimecraftWorld : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class RimecraftWorld : MonoBehaviour
 
     private bool applyingModifications = false;
 
-    private static Queue<Queue<VoxelMod>> modifications = new Queue<Queue<VoxelMod>>();
+    private static ConcurrentQueue<ConcurrentQueue<VoxelMod>> modifications = new ConcurrentQueue<ConcurrentQueue<VoxelMod>>();
 
     private bool inUI = false;
 
@@ -148,12 +149,12 @@ public class RimecraftWorld : MonoBehaviour
 
         while (modifications.Count > 0)
         {
-            Queue<VoxelMod> queue = modifications.Dequeue();
-
+            ConcurrentQueue<VoxelMod> queue;
+            modifications.TryDequeue(out queue);
             while (queue.Count > 0)
             {
-                VoxelMod v = queue.Dequeue();
-
+                VoxelMod v;
+                queue.TryDequeue(out v);
                 worldData.SetVoxel(v.position, v.id);
             }
         }
@@ -211,7 +212,7 @@ public class RimecraftWorld : MonoBehaviour
 
         // This is our loadDistance * 2 cubed. Shouldn't ever be bigger than this size for the array
         int size = 8 * settings.loadDistance * settings.loadDistance * settings.loadDistance;
-        NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.TempJob);
+        NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.Persistent);
         int usageCount = 0;
 
         for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
@@ -236,6 +237,7 @@ public class RimecraftWorld : MonoBehaviour
             positions = positions,
         };
         JobHandle jobHandle = job.Schedule(usageCount, 1);
+        JobHandle.ScheduleBatchedJobs();
         jobHandle.Complete();
         positions.Dispose();
     }
