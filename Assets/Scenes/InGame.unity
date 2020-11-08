@@ -279,7 +279,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     version: 0.1
-    loadDistance: 4
+    loadDistance: 2
     viewDistanceInChunks: 2
     mouseSensitivity: 2
   biomes:

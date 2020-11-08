@@ -212,7 +212,7 @@ public class RimecraftWorld : MonoBehaviour
 
         // This is our loadDistance * 2 cubed. Shouldn't ever be bigger than this size for the array
         int size = 8 * settings.loadDistance * settings.loadDistance * settings.loadDistance;
-        NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.Persistent);
+        NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.TempJob);
         int usageCount = 0;
 
         for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
@@ -237,9 +237,8 @@ public class RimecraftWorld : MonoBehaviour
             {
                 positions = positions,
             };
-            JobHandle jobHandle = job.Schedule(usageCount, 1);
+            job.Schedule(usageCount, 1);
             JobHandle.ScheduleBatchedJobs();
-            jobHandle.Complete();
         }
         else
         {
@@ -247,13 +246,13 @@ public class RimecraftWorld : MonoBehaviour
             {
                 WorldData.LoadChunk(positions[i]);
             }
+            positions.Dispose();
         }
-        positions.Dispose();
     }
 
     internal struct LoadJob : IJobParallelFor
     {
-        public NativeArray<int3> positions;
+        [DeallocateOnJobCompletion] public NativeArray<int3> positions;
 
         public void Execute(int i)
         {
