@@ -15,14 +15,14 @@ public class WorldData
     [System.NonSerialized]
     public ConcurrentDictionary<int3, ChunkData> chunks = new ConcurrentDictionary<int3, ChunkData>();
 
-    [System.NonSerialized]
-    public static List<ChunkData> modifiedChunks = new List<ChunkData>();
+    [System.NonSerialized] // We use this as a ConcurrentSet, the byte does nothing
+    public static ConcurrentDictionary<ChunkData, byte> modifiedChunks = new ConcurrentDictionary<ChunkData, byte>();
 
-    public void AddToModifiedChunkList(ChunkData chunk)
+    public static void AddToModifiedChunkList(ChunkData chunk)
     {
-        if (!modifiedChunks.Contains(chunk))
+        if (!modifiedChunks.ContainsKey(chunk))
         {
-            modifiedChunks.Add(chunk);
+            modifiedChunks.TryAdd(chunk, 1);
         }
     }
 
@@ -105,15 +105,5 @@ public class WorldData
             Debug.Log(voxel.x + ", " + voxel.y + ", " + voxel.z);
             throw e;
         }
-    }
-}
-
-internal struct PopulateJob : IJob
-{
-    public int3 coord;
-
-    public void Execute()
-    {
-        ChunkData.Populate(RimecraftWorld.Instance.worldData.chunks[coord]);
     }
 }
