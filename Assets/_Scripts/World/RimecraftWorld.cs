@@ -226,7 +226,6 @@ public class RimecraftWorld : MonoBehaviour
                     {
                         positions[usageCount] = location;
                         usageCount++;
-                        //WorldData.LoadChunk(location);
                     }
                 }
             }
