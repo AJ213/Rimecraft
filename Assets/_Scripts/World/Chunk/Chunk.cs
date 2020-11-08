@@ -95,31 +95,35 @@ public class Chunk
 
         for (int p = 0; p < 6; p++)
         {
-            int faceVertCount = 0;
-            for (int i = 0; i < voxel.Properties.meshData.faces[p].vertData.Length; i++)
+            VoxelState neighbor = WorldHelper.GetVoxelFromPosition(WorldHelper.GetVoxelGlobalPositionFromChunk(localPosition, coord) + VoxelData.faceChecks[p]);
+            if (neighbor != null && neighbor.Properties.renderNeightborFaces)
             {
-                vertices.Add(localPosition + (float3)voxel.Properties.meshData.faces[p].vertData[i].position);
-                normals.Add(voxel.Properties.meshData.faces[p].normal);
-                AddTexture(voxel.Properties.GetTextureID(p), voxel.Properties.meshData.faces[p].vertData[i].uv);
-                faceVertCount++;
-            }
-
-            if (!voxel.Properties.renderNeightborFaces)
-            {
-                for (int i = 0; i < voxel.Properties.meshData.faces[p].triangles.Length; i++)
+                int faceVertCount = 0;
+                for (int i = 0; i < voxel.Properties.meshData.faces[p].vertData.Length; i++)
                 {
-                    triangles.Add(vertexIndex + voxel.Properties.meshData.faces[p].triangles[i]);
+                    vertices.Add(localPosition + (float3)voxel.Properties.meshData.faces[p].vertData[i].position);
+                    normals.Add(voxel.Properties.meshData.faces[p].normal);
+                    AddTexture(voxel.Properties.GetTextureID(p), voxel.Properties.meshData.faces[p].vertData[i].uv);
+                    faceVertCount++;
                 }
-            }
-            else
-            {
-                for (int i = 0; i < voxel.Properties.meshData.faces[p].triangles.Length; i++)
-                {
-                    transparentTriangles.Add(vertexIndex + voxel.Properties.meshData.faces[p].triangles[i]);
-                }
-            }
 
-            vertexIndex += faceVertCount;
+                if (!voxel.Properties.renderNeightborFaces)
+                {
+                    for (int i = 0; i < voxel.Properties.meshData.faces[p].triangles.Length; i++)
+                    {
+                        triangles.Add(vertexIndex + voxel.Properties.meshData.faces[p].triangles[i]);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < voxel.Properties.meshData.faces[p].triangles.Length; i++)
+                    {
+                        transparentTriangles.Add(vertexIndex + voxel.Properties.meshData.faces[p].triangles[i]);
+                    }
+                }
+
+                vertexIndex += faceVertCount;
+            }
         }
     }
 

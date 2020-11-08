@@ -231,14 +231,23 @@ public class RimecraftWorld : MonoBehaviour
                 }
             }
         }
-
-        var job = new LoadJob()
+        if (JobsEnabled)
         {
-            positions = positions,
-        };
-        JobHandle jobHandle = job.Schedule(usageCount, 1);
-        JobHandle.ScheduleBatchedJobs();
-        jobHandle.Complete();
+            var job = new LoadJob()
+            {
+                positions = positions,
+            };
+            JobHandle jobHandle = job.Schedule(usageCount, 1);
+            JobHandle.ScheduleBatchedJobs();
+            jobHandle.Complete();
+        }
+        else
+        {
+            for (int i = 0; i < usageCount; i++)
+            {
+                WorldData.LoadChunk(positions[i]);
+            }
+        }
         positions.Dispose();
     }
 

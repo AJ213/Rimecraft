@@ -29,21 +29,30 @@ public static class WorldHelper
 
     public static Chunk GetChunkFromPosition(float3 globalPosition)
     {
-        try
+        int3 coord = GetChunkCoordFromPosition(globalPosition);
+        if (RimecraftWorld.Instance.chunks.ContainsKey(coord))
         {
             return RimecraftWorld.Instance.chunks[GetChunkCoordFromPosition(globalPosition)];
         }
-        catch (System.Exception e)
+        else
         {
-            Debug.Log(globalPosition.x + ", " + globalPosition.y + ", " + globalPosition.z);
-            Debug.Log(GetChunkCoordFromPosition(globalPosition).x + ", " + GetChunkCoordFromPosition(globalPosition).y + ", " + GetChunkCoordFromPosition(globalPosition).z);
-            throw e;
+            // This is causing a bug likely that we need to fix
+            //Debug.Log("Chunk doesn't exist at " + coord);
+            return null;
         }
     }
 
     public static VoxelState GetVoxelFromPosition(float3 globalPosition)
     {
-        return GetChunkFromPosition(globalPosition).chunkData.VoxelFromPosition(GetVoxelLocalPositionInChunk(globalPosition));
+        Chunk chunk = GetChunkFromPosition(globalPosition);
+        if (chunk == null)
+        {
+            return null;
+        }
+        else
+        {
+            return GetChunkFromPosition(globalPosition).chunkData.VoxelFromPosition(GetVoxelLocalPositionInChunk(globalPosition));
+        }
     }
 
     public static bool IsVoxelGlobalPositionInChunk(float3 globalPosition, int3 coord)

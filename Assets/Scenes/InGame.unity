@@ -279,12 +279,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     version: 0.1
-    loadDistance: 6
-    viewDistanceInChunks: 3
+    loadDistance: 4
+    viewDistanceInChunks: 2
     mouseSensitivity: 2
   biomes:
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
+  JobsEnabled: 1
   player: {fileID: 332412510}
   spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: a2057a62d0e121f43922d28e5ccb4da9, type: 2}
