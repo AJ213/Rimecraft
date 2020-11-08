@@ -50,7 +50,10 @@ public class ChunkData
             }
         }
 
-        WorldData.AddToModifiedChunkList(chunk);
+        if (!WorldData.modifiedChunks.Contains(chunk))
+        {
+            WorldData.modifiedChunks.Add(chunk);
+        }
     }
 
     public void ModifyVoxel(int3 localPosition, ushort id)
@@ -63,7 +66,7 @@ public class ChunkData
         VoxelState voxel = map[localPosition.x, localPosition.y, localPosition.z];
 
         voxel.id = id;
-        WorldData.AddToModifiedChunkList(this);
+        RimecraftWorld.Instance.worldData.AddToModifiedChunkList(this);
         if (chunk != null)
         {
             RimecraftWorld.Instance.AddChunkToUpdate(chunk, true);

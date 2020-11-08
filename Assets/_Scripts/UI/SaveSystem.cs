@@ -30,7 +30,7 @@ public static class SaveSystem
 
     public static void SaveChunks(WorldData world)
     {
-        List<ChunkData> chunks = new List<ChunkData>(WorldData.modifiedChunks.Keys);
+        List<ChunkData> chunks = new List<ChunkData>(WorldData.modifiedChunks);
         WorldData.modifiedChunks.Clear();
 
         int count = 0;
