@@ -4,11 +4,15 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Entities;
 using System.Linq;
+using Unity.Jobs;
+using Unity.Collections;
 
 public class RimecraftWorld : MonoBehaviour
 {
     public Settings settings;
     public BiomeAttributes[] biomes;
+
+    public bool JobsEnabled = false;
 
     public Transform player;
     public Vector3 spawnPosition;
@@ -29,7 +33,7 @@ public class RimecraftWorld : MonoBehaviour
 
     private bool applyingModifications = false;
 
-    private Queue<Queue<VoxelMod>> modifications = new Queue<Queue<VoxelMod>>();
+    private static Queue<Queue<VoxelMod>> modifications = new Queue<Queue<VoxelMod>>();
 
     private bool inUI = false;
 
@@ -60,13 +64,12 @@ public class RimecraftWorld : MonoBehaviour
     {
         Debug.Log("Generating new world using seed " + VoxelData.seed);
 
-        worldData = SaveSystem.LoadWorld("Prototype");
+        worldData = SaveSystem.LoadWorld("Prototype", VoxelData.seed);
 
         UnityEngine.Random.InitState(VoxelData.seed);
         Camera.main.farClipPlane = Mathf.Sqrt(2) * Constants.ChunkSizeX * 2 * settings.viewDistanceInChunks;
-        LoadWorld();
 
-        spawnPosition = new Vector3(0, 0, 0);
+        spawnPosition = new Vector3(0, 5, 0);
         player.position = spawnPosition;
         CheckLoadDistance();
         CheckViewDistance();
@@ -103,20 +106,6 @@ public class RimecraftWorld : MonoBehaviour
         {
             debugScreen.SetActive(!debugScreen.activeSelf);
         }
-    }
-
-    private void LoadWorld()
-    {
-        /* for (int x = -Constants.WorldSizeInChunks / 2; x < Constants.WorldSizeInChunks / 2; x++)
-         {
-             for (int y = -Constants.WorldSizeInChunks; y < 0; y++)
-             {
-                 for (int z = -Constants.WorldSizeInChunks / 2; z < Constants.WorldSizeInChunks / 2; z++)
-                 {
-                     worldData.LoadChunk(new int3(x, y, z));
-                 }
-             }
-         }*/
     }
 
     public void AddChunkToUpdate(Chunk chunk)
@@ -220,19 +209,44 @@ public class RimecraftWorld : MonoBehaviour
         int3 coord = WorldHelper.GetChunkCoordFromPosition(player.position);
         playerLastChunkCoord = playerChunkCoord;
 
+        // This is our loadDistance * 2 cubed. Shouldn't ever be bigger than this size for the array
+        int size = 8 * settings.loadDistance * settings.loadDistance * settings.loadDistance;
+        NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.TempJob);
+        int usageCount = 0;
+
         for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
         {
-            for (int y = coord.y - settings.loadDistance; y < coord.y + settings.viewDistanceInChunks; y++)
+            for (int y = coord.y - settings.loadDistance; y < coord.y + settings.loadDistance; y++)
             {
                 for (int z = coord.z - settings.loadDistance; z < coord.z + settings.loadDistance; z++)
                 {
                     int3 location = new int3(x, y, z);
                     if (!chunks.ContainsKey(location))
                     {
-                        worldData.LoadChunk(location);
+                        positions[usageCount] = location;
+                        usageCount++;
+                        //WorldData.LoadChunk(location);
                     }
                 }
             }
+        }
+
+        var job = new LoadJob()
+        {
+            positions = positions,
+        };
+        JobHandle jobHandle = job.Schedule(usageCount, 1);
+        jobHandle.Complete();
+        positions.Dispose();
+    }
+
+    internal struct LoadJob : IJobParallelFor
+    {
+        public NativeArray<int3> positions;
+
+        public void Execute(int i)
+        {
+            WorldData.LoadChunk(positions[i]);
         }
     }
 
@@ -241,7 +255,7 @@ public class RimecraftWorld : MonoBehaviour
         VoxelState voxel = worldData.GetVoxel(globalPosition);
         if (voxel == null)
         {
-            Debug.Log("Null block");
+            Debug.Log("Null block at " + globalPosition);
             return 0;
         }
 
@@ -279,16 +293,8 @@ public class RimecraftWorld : MonoBehaviour
         }
     }
 
-    public ushort GetVoxel(int3 globalPosition)
+    public static ushort SamplePosition(int3 globalPosition, BiomeAttributes[] biomes)
     {
-        /* IMMUTABLE PASS */
-
-        // If outside word, return air.
-        /*        if (!WorldHelper.IsInRange(pos, Constants.WorldSizeInVoxels))
-                {
-                    return 0;
-                }*/
-
         int solidGroundHeight = 0;
         float sumOfHeights = 0;
         int count = 0;
@@ -328,38 +334,44 @@ public class RimecraftWorld : MonoBehaviour
         sumOfHeights /= count;
 
         int terrainHeight = Mathf.FloorToInt(sumOfHeights + solidGroundHeight);
-        ushort voxelValue = 0;
 
-        SurfaceBlocks(ref voxelValue, globalPosition, biome, terrainHeight);
-        LodeGeneration(ref voxelValue, globalPosition, biome);
+        ushort voxelID = 0;
+
+        SurfaceBlocks(ref voxelID, globalPosition, biome, terrainHeight);
+        LodeGeneration(ref voxelID, globalPosition, biome);
         FloraGeneration(globalPosition, biome, terrainHeight);
 
-        return voxelValue;
+        if (globalPosition.y == -2)
+        {
+            voxelID = 2;
+        }
+
+        return voxelID;
     }
 
-    private void SurfaceBlocks(ref ushort voxelValue, int3 globalPosition, BiomeAttributes biome, int terrainHeight)
+    private static void SurfaceBlocks(ref ushort voxelID, int3 globalPosition, BiomeAttributes biome, int terrainHeight)
     {
         if (globalPosition.y == terrainHeight)
         {
-            voxelValue = biome.surfaceBlock;
+            voxelID = biome.surfaceBlock;
         }
         else if (globalPosition.y < terrainHeight && globalPosition.y > terrainHeight - 4)
         {
-            voxelValue = biome.subSurfaceBlock;
+            voxelID = biome.subSurfaceBlock;
         }
         else if (globalPosition.y > terrainHeight)
         {
-            voxelValue = 0;
+            voxelID = 0;
         }
         else
         {
-            voxelValue = 3;
+            voxelID = 3;
         }
     }
 
-    private void LodeGeneration(ref ushort voxelValue, int3 globalPosition, BiomeAttributes biome)
+    private static void LodeGeneration(ref ushort voxelID, int3 globalPosition, BiomeAttributes biome)
     {
-        if (voxelValue == 3 || voxelValue == 1)
+        if (voxelID == 3 || voxelID == 1)
         {
             foreach (Lode lode in biome.lodes)
             {
@@ -367,14 +379,14 @@ public class RimecraftWorld : MonoBehaviour
                 {
                     if (Noise.Get3DSimplex(globalPosition, lode.noiseOffset, lode.scale) > lode.threshold)
                     {
-                        voxelValue = lode.blockID;
+                        voxelID = lode.blockID;
                     }
                 }
             }
         }
     }
 
-    private void FloraGeneration(int3 globalPosition, BiomeAttributes biome, int terrainHeight)
+    private static void FloraGeneration(int3 globalPosition, BiomeAttributes biome, int terrainHeight)
     {
         if (globalPosition.y == terrainHeight && biome.placeMajorFlora)
         {

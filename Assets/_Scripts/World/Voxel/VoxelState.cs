@@ -8,14 +8,12 @@ public class VoxelState
 {
     public ushort id;
     [System.NonSerialized] public ChunkData chunkData;
-    [System.NonSerialized] public VoxelNeighbors neighbours;
     [System.NonSerialized] public int3 position;
 
     public VoxelState(ushort id, ChunkData chunkData, int3 position)
     {
         this.id = id;
         this.chunkData = chunkData;
-        neighbours = new VoxelNeighbors(this);
         this.position = position;
     }
 

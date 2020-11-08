@@ -41,6 +41,11 @@ public static class WorldHelper
         }
     }
 
+    public static VoxelState GetVoxelFromPosition(float3 globalPosition)
+    {
+        return GetChunkFromPosition(globalPosition).chunkData.VoxelFromPosition(GetVoxelLocalPositionInChunk(globalPosition));
+    }
+
     public static bool IsVoxelGlobalPositionInChunk(float3 globalPosition, int3 coord)
     {
         return ((float3)GetVoxelGlobalPositionFromChunk(GetVoxelLocalPositionInChunk(globalPosition), coord)).Equals(globalPosition);

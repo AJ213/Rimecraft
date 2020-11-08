@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.Jobs;
+using Unity.Collections;
+using UnityEngine.UIElements;
+using System.Collections.Concurrent;
 
 [System.Serializable]
 public class WorldData
@@ -9,10 +13,10 @@ public class WorldData
     public int seed;
 
     [System.NonSerialized]
-    public Dictionary<int3, ChunkData> chunks = new Dictionary<int3, ChunkData>();
+    public ConcurrentDictionary<int3, ChunkData> chunks = new ConcurrentDictionary<int3, ChunkData>();
 
     [System.NonSerialized]
-    public List<ChunkData> modifiedChunks = new List<ChunkData>();
+    public static List<ChunkData> modifiedChunks = new List<ChunkData>();
 
     public void AddToModifiedChunkList(ChunkData chunk)
     {
@@ -55,22 +59,22 @@ public class WorldData
         return c;
     }
 
-    public void LoadChunk(int3 coord)
+    public static void LoadChunk(int3 coord)
     {
-        if (chunks.ContainsKey(coord))
+        if (RimecraftWorld.Instance.worldData.chunks.ContainsKey(coord))
         {
             return;
         }
 
-        ChunkData chunk = SaveSystem.LoadChunk(worldName, coord);
+        ChunkData chunk = SaveSystem.LoadChunk(RimecraftWorld.Instance.worldData.worldName, coord);
         if (chunk != null)
         {
-            chunks.Add(coord, chunk);
+            RimecraftWorld.Instance.worldData.chunks.TryAdd(coord, chunk);
             return;
         }
 
-        chunks.Add(coord, new ChunkData(coord));
-        chunks[coord].Populate();
+        RimecraftWorld.Instance.worldData.chunks.TryAdd(coord, new ChunkData(coord));
+        ChunkData.Populate(RimecraftWorld.Instance.worldData.chunks[coord]);
     }
 
     public void SetVoxel(int3 globalPosition, ushort value)
@@ -101,5 +105,15 @@ public class WorldData
             Debug.Log(voxel.x + ", " + voxel.y + ", " + voxel.z);
             throw e;
         }
+    }
+}
+
+internal struct PopulateJob : IJob
+{
+    public int3 coord;
+
+    public void Execute()
+    {
+        ChunkData.Populate(RimecraftWorld.Instance.worldData.chunks[coord]);
     }
 }

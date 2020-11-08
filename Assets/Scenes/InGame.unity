@@ -279,8 +279,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     version: 0.1
-    loadDistance: 1
-    viewDistanceInChunks: 2
+    loadDistance: 6
+    viewDistanceInChunks: 3
     mouseSensitivity: 2
   biomes:
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
@@ -297,6 +297,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 67e0362cf7016f0438ee1a14c3b3e522, type: 2}
   - {fileID: 11400000, guid: 3caa91537269c274d80da87fa143e183, type: 2}
   - {fileID: 11400000, guid: 65778f50f921083419a4b19003b27012, type: 2}
+  playerChunkCoord:
+    x: 0
+    y: 0
+    z: 0
   debugScreen: {fileID: 2060800638}
   worldData:
     worldName: Default

@@ -36,7 +36,7 @@ public class ChunkData
     [HideInInspector]
     public VoxelState[,,] map = new VoxelState[Constants.ChunkSizeX, Constants.ChunkSizeY, Constants.ChunkSizeZ];
 
-    public void Populate()
+    public static void Populate(ChunkData chunk)
     {
         for (int y = 0; y < Constants.ChunkSizeX; y++)
         {
@@ -44,28 +44,16 @@ public class ChunkData
             {
                 for (int z = 0; z < Constants.ChunkSizeZ; z++)
                 {
-                    int3 voxelGlobalPosition = WorldHelper.GetVoxelGlobalPositionFromChunk(new int3(x, y, z), Coord);
-                    map[x, y, z] = new VoxelState(RimecraftWorld.Instance.GetVoxel(voxelGlobalPosition), this, new int3(x, y, z));
-
-                    for (int p = 0; p < 6; p++)
-                    {
-                        int3 neighbourInt3 = new int3(x, y, z) + VoxelData.faceChecks[p];
-                        if (WorldHelper.IsInRange(neighbourInt3.x, Constants.ChunkSizeX) &&
-                            WorldHelper.IsInRange(neighbourInt3.y, Constants.ChunkSizeY) &&
-                            WorldHelper.IsInRange(neighbourInt3.z, Constants.ChunkSizeZ))
-                        {
-                            map[x, y, z].neighbours[p] = VoxelFromPosition(neighbourInt3);
-                        }
-                        else
-                        {
-                            map[x, y, z].neighbours[p] = RimecraftWorld.Instance.worldData.GetVoxel(voxelGlobalPosition + VoxelData.faceChecks[p]);
-                        }
-                    }
+                    int3 localPosition = new int3(x, y, z);
+                    chunk.map[x, y, z] = new VoxelState(RimecraftWorld.SamplePosition(WorldHelper.GetVoxelGlobalPositionFromChunk(localPosition, chunk.Coord), RimecraftWorld.Instance.biomes), chunk, localPosition);
                 }
             }
         }
 
-        RimecraftWorld.Instance.worldData.AddToModifiedChunkList(this);
+        if (!WorldData.modifiedChunks.Contains(chunk))
+        {
+            WorldData.modifiedChunks.Add(chunk);
+        }
     }
 
     public void ModifyVoxel(int3 localPosition, ushort id)
