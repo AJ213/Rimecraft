@@ -172,11 +172,12 @@ public class RimecraftWorld : MonoBehaviour
         int3 minimum = new int3(coord.x - settings.viewDistance, coord.y - settings.viewDistance, coord.z - settings.viewDistance);
         int3 maximum = new int3(coord.x + settings.viewDistance, coord.y + settings.viewDistance, coord.z + settings.viewDistance);
 
-        for (int x = coord.x, cx = 1; x >= minimum.x && x < maximum.x; x += cx * (int)math.pow(-1, cx - 1), cx++)
+        // Uses an alternating sequence. Starts at the center of the player and moves out step by step.
+        for (int x = coord.x, counterx = 1; x >= minimum.x && x < maximum.x; x += counterx * (int)math.pow(-1, counterx - 1), counterx++)
         {
-            for (int y = coord.y, cy = 1; y >= minimum.y && y < maximum.y; y += cy * (int)math.pow(-1, cy - 1), cy++)
+            for (int y = coord.y, countery = 1; y >= minimum.y && y < maximum.y; y += countery * (int)math.pow(-1, countery - 1), countery++)
             {
-                for (int z = coord.z, cz = 1; z >= minimum.z && z < maximum.z; z += cz * (int)math.pow(-1, cz - 1), cz++)
+                for (int z = coord.z, counterz = 1; z >= minimum.z && z < maximum.z; z += counterz * (int)math.pow(-1, counterz - 1), counterz++)
                 {
                     int3 location = new int3(x, y, z);
                     if (!chunks.ContainsKey(location))
@@ -214,6 +215,7 @@ public class RimecraftWorld : MonoBehaviour
         int size = 8 * settings.loadDistance * settings.loadDistance * settings.loadDistance;
         NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.Persistent);
         int usageCount = 0;
+        bool newChunks = false;
 
         for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
         {
@@ -225,6 +227,7 @@ public class RimecraftWorld : MonoBehaviour
                     if (!chunks.ContainsKey(location))
                     {
                         positions[usageCount] = location;
+                        newChunks = true;
                         usageCount++;
                     }
                 }
@@ -232,8 +235,9 @@ public class RimecraftWorld : MonoBehaviour
         }
         if (JobsEnabled)
         {
-            if (positions[0].Equals(int3.zero) && positions[1].Equals(int3.zero))
+            if (!newChunks)
             {
+                // We don't want to bother loading jobs if there is nothing new to load
                 positions.Dispose();
             }
             else

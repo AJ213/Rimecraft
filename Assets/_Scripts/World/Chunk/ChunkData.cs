@@ -55,6 +55,7 @@ public class ChunkData
 
     public void ModifyVoxel(int3 localPosition, ushort id)
     {
+        // It shouldn't ever be null in the first place, meaning there is something wrong happening here occasionally (with jobs)
         if (map[localPosition.x, localPosition.y, localPosition.z] == null || map[localPosition.x, localPosition.y, localPosition.z].id == id)
         {
             return;

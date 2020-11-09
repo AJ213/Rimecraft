@@ -279,8 +279,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     version: 0.1
-    loadDistance: 3
-    viewDistance: 3
+    loadDistance: 7
+    viewDistance: 7
     mouseSensitivity: 2
   biomes:
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
