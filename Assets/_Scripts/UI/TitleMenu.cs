@@ -42,7 +42,7 @@ public class TitleMenu : MonoBehaviour
 
     public void EnterSettings()
     {
-        viewDistanceSlider.value = settings.viewDistanceInChunks;
+        viewDistanceSlider.value = settings.viewDistance;
         UpdateViewDstSlider();
         mouseSlider.value = settings.mouseSensitivity;
         UpdateMouseSlider();
@@ -53,7 +53,7 @@ public class TitleMenu : MonoBehaviour
 
     public void LeaveSettings()
     {
-        settings.viewDistanceInChunks = Mathf.FloorToInt(viewDistanceSlider.value);
+        settings.viewDistance = Mathf.FloorToInt(viewDistanceSlider.value);
         settings.mouseSensitivity = mouseSlider.value;
 
         string jsonExport = JsonUtility.ToJson(settings);

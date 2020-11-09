@@ -7,6 +7,7 @@ using System.Linq;
 using Unity.Jobs;
 using Unity.Collections;
 using System.Collections.Concurrent;
+using System.Configuration;
 
 public class RimecraftWorld : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class RimecraftWorld : MonoBehaviour
     [HideInInspector]
     public Dictionary<int3, Chunk> chunks = new Dictionary<int3, Chunk>();
 
-    private List<int3> activeChunks = new List<int3>();
+    private HashSet<int3> activeChunks = new HashSet<int3>();
     public int3 playerChunkCoord;
     private int3 playerLastChunkCoord;
 
@@ -68,7 +69,7 @@ public class RimecraftWorld : MonoBehaviour
         worldData = SaveSystem.LoadWorld("Prototype", VoxelData.seed);
 
         UnityEngine.Random.InitState(VoxelData.seed);
-        Camera.main.farClipPlane = Mathf.Sqrt(2) * Constants.ChunkSizeX * 2 * settings.viewDistanceInChunks;
+        Camera.main.farClipPlane = Mathf.Sqrt(2) * Constants.ChunkSizeX * 2 * settings.viewDistance;
 
         spawnPosition = new Vector3(0, 5, 0);
         player.position = spawnPosition;
@@ -165,17 +166,17 @@ public class RimecraftWorld : MonoBehaviour
     {
         int3 coord = WorldHelper.GetChunkCoordFromPosition(player.position);
         playerLastChunkCoord = playerChunkCoord;
-
         List<int3> previouslyActiveChunks = new List<int3>(activeChunks);
-
         activeChunks.Clear();
 
-        // Loop through all chunks currently within view distance of the player.
-        for (int x = coord.x - settings.viewDistanceInChunks; x < coord.x + settings.viewDistanceInChunks; x++)
+        int3 minimum = new int3(coord.x - settings.viewDistance, coord.y - settings.viewDistance, coord.z - settings.viewDistance);
+        int3 maximum = new int3(coord.x + settings.viewDistance, coord.y + settings.viewDistance, coord.z + settings.viewDistance);
+
+        for (int x = coord.x, cx = 1; x >= minimum.x && x < maximum.x; x += cx * (int)math.pow(-1, cx - 1), cx++)
         {
-            for (int y = coord.y - settings.viewDistanceInChunks; y < coord.y + settings.viewDistanceInChunks; y++)
+            for (int y = coord.y, cy = 1; y >= minimum.y && y < maximum.y; y += cy * (int)math.pow(-1, cy - 1), cy++)
             {
-                for (int z = coord.z - settings.viewDistanceInChunks; z < coord.z + settings.viewDistanceInChunks; z++)
+                for (int z = coord.z, cz = 1; z >= minimum.z && z < maximum.z; z += cz * (int)math.pow(-1, cz - 1), cz++)
                 {
                     int3 location = new int3(x, y, z);
                     if (!chunks.ContainsKey(location))
@@ -186,7 +187,6 @@ public class RimecraftWorld : MonoBehaviour
                     chunks[location].IsActive = true;
                     activeChunks.Add(location);
 
-                    // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
                     for (int i = 0; i < previouslyActiveChunks.Count; i++)
                     {
                         if (previouslyActiveChunks[i].Equals(location))
@@ -212,7 +212,7 @@ public class RimecraftWorld : MonoBehaviour
 
         // This is our loadDistance * 2 cubed. Shouldn't ever be bigger than this size for the array
         int size = 8 * settings.loadDistance * settings.loadDistance * settings.loadDistance;
-        NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.TempJob);
+        NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.Persistent);
         int usageCount = 0;
 
         for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
@@ -232,12 +232,19 @@ public class RimecraftWorld : MonoBehaviour
         }
         if (JobsEnabled)
         {
-            var job = new LoadJob()
+            if (positions[0].Equals(int3.zero) && positions[1].Equals(int3.zero))
             {
-                positions = positions,
-            };
-            job.Schedule(usageCount, 1);
-            JobHandle.ScheduleBatchedJobs();
+                positions.Dispose();
+            }
+            else
+            {
+                var job = new LoadJob()
+                {
+                    positions = positions,
+                };
+                job.Schedule(usageCount, 2);
+                JobHandle.ScheduleBatchedJobs();
+            }
         }
         else
         {

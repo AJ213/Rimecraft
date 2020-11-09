@@ -11,7 +11,7 @@ public class Settings
     [Header("Performance")]
     public int loadDistance = 16;
 
-    public int viewDistanceInChunks = 8;
+    public int viewDistance = 8;
 
     [Range(0.1f, 10f)]
     public float mouseSensitivity = 2;

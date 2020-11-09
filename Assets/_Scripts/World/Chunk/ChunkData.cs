@@ -55,7 +55,7 @@ public class ChunkData
 
     public void ModifyVoxel(int3 localPosition, ushort id)
     {
-        if (map[localPosition.x, localPosition.y, localPosition.z].id == id)
+        if (map[localPosition.x, localPosition.y, localPosition.z] == null || map[localPosition.x, localPosition.y, localPosition.z].id == id)
         {
             return;
         }
