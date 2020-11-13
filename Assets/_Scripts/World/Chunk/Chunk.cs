@@ -22,8 +22,6 @@ public class Chunk
 
     private bool isActive;
 
-    public ChunkData chunkData;
-
     public Chunk(int3 coord)
     {
         this.coord = coord;
@@ -41,9 +39,6 @@ public class Chunk
         chunkObject.name = "Chunk " + coord.x + ", " + coord.y + "," + coord.z;
         position = new int3(Mathf.FloorToInt(chunkObject.transform.position.x), Mathf.FloorToInt(chunkObject.transform.position.y), Mathf.FloorToInt(chunkObject.transform.position.z));
 
-        chunkData = RimecraftWorld.Instance.worldData.RequestChunk(coord, true);
-        chunkData.chunk = this;
-
         RimecraftWorld.Instance.AddChunkToUpdate(this);
     }
 
@@ -57,9 +52,15 @@ public class Chunk
             {
                 for (int z = 0; z < Constants.ChunkSizeZ; z++)
                 {
-                    if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
+                    int3 location = WorldHelper.GetVoxelGlobalPositionFromChunk(new int3(x, y, z), coord);
+                    VoxelState voxel = WorldHelper.GetVoxelFromPosition(location);
+                    if (voxel != null)
                     {
-                        UpdateMeshData(new int3(x, y, z));
+                        BlockType block = RimecraftWorld.Instance.blockTypes[voxel.id];
+                        if (block != null && block.isSolid)
+                        {
+                            UpdateMeshData(WorldHelper.GetVoxelLocalPositionInChunk(location));
+                        }
                     }
                 }
             }
@@ -69,8 +70,8 @@ public class Chunk
 
     public void EditVoxel(float3 globalPosition, ushort newID)
     {
-        chunkData.ModifyVoxel(WorldHelper.GetVoxelLocalPositionInChunk(globalPosition), newID);
-
+        WorldData.chunks[coord].ModifyVoxel(WorldHelper.GetVoxelLocalPositionInChunk(globalPosition), newID);
+        RimecraftWorld.Instance.AddChunkToUpdate(this);
         UpdateSorroundingVoxels(new int3(Mathf.FloorToInt(globalPosition.x),
                                 Mathf.FloorToInt(globalPosition.y),
                                 Mathf.FloorToInt(globalPosition.z)));
@@ -91,7 +92,7 @@ public class Chunk
 
     private void UpdateMeshData(int3 localPosition)
     {
-        VoxelState voxel = chunkData.map[localPosition.x, localPosition.y, localPosition.z];
+        VoxelState voxel = WorldData.chunks[coord].map[localPosition.x, localPosition.y, localPosition.z];
 
         for (int p = 0; p < 6; p++)
         {

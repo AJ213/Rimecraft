@@ -45,13 +45,13 @@ public static class WorldHelper
     public static VoxelState GetVoxelFromPosition(float3 globalPosition)
     {
         Chunk chunk = GetChunkFromPosition(globalPosition);
-        if (chunk == null)
+        if (chunk == null || !WorldData.chunks.ContainsKey(chunk.coord))
         {
             return null;
         }
         else
         {
-            return GetChunkFromPosition(globalPosition).chunkData.VoxelFromPosition(GetVoxelLocalPositionInChunk(globalPosition));
+            return WorldData.chunks[chunk.coord].VoxelFromPosition(GetVoxelLocalPositionInChunk(globalPosition));
         }
     }
 

@@ -246,7 +246,7 @@ public class RimecraftWorld : MonoBehaviour
                 {
                     positions = positions,
                 };
-                job.Schedule(usageCount, 2);
+                job.Schedule(usageCount, 1);
                 JobHandle.ScheduleBatchedJobs();
             }
         }
@@ -275,7 +275,7 @@ public class RimecraftWorld : MonoBehaviour
         VoxelState voxel = worldData.GetVoxel(globalPosition);
         if (voxel == null)
         {
-            Debug.Log("Null block at " + globalPosition);
+            //Debug.Log("Null block at " + globalPosition);
             return 0;
         }
 

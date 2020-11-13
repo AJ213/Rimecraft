@@ -13,7 +13,7 @@ public class WorldData
     public int seed;
 
     [System.NonSerialized]
-    public ConcurrentDictionary<int3, ChunkData> chunks = new ConcurrentDictionary<int3, ChunkData>();
+    public static ConcurrentDictionary<int3, ChunkData> chunks = new ConcurrentDictionary<int3, ChunkData>();
 
     [System.NonSerialized] // We use this as a ConcurrentSet, the byte does nothing
     public static ConcurrentDictionary<ChunkData, byte> modifiedChunks = new ConcurrentDictionary<ChunkData, byte>();
@@ -61,7 +61,7 @@ public class WorldData
 
     public static void LoadChunk(int3 coord)
     {
-        if (RimecraftWorld.Instance.worldData.chunks.ContainsKey(coord))
+        if (WorldData.chunks.ContainsKey(coord))
         {
             return;
         }
@@ -69,12 +69,12 @@ public class WorldData
         ChunkData chunk = SaveSystem.LoadChunk(RimecraftWorld.Instance.worldData.worldName, coord);
         if (chunk != null)
         {
-            RimecraftWorld.Instance.worldData.chunks.TryAdd(coord, chunk);
+            WorldData.chunks.TryAdd(coord, chunk);
             return;
         }
 
-        RimecraftWorld.Instance.worldData.chunks.TryAdd(coord, new ChunkData(coord));
-        ChunkData.Populate(RimecraftWorld.Instance.worldData.chunks[coord]);
+        WorldData.chunks.TryAdd(coord, new ChunkData(coord));
+        ChunkData.Populate(WorldData.chunks[coord]);
     }
 
     public void SetVoxel(int3 globalPosition, ushort value)
