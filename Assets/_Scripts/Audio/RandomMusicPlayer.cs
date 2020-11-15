@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class RandomMusicPlayer : MonoBehaviour
 {
-    private AudioManager audioManager;
-    private bool playingMusic = false;
+    protected AudioManager audioManager;
+    public bool playingMusic = false;
     private bool waitingForMusic = false;
-    private int lastMusicIndex = -1;
+    protected int lastMusicIndex = -1;
     [SerializeField] private Vector2 timeRange = new Vector2(0, 1000);
 
     private void Awake()
@@ -29,17 +29,23 @@ public class RandomMusicPlayer : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         if (!playingMusic)
         {
-            int soundIndex = Random.Range(0, audioManager.sounds.Length);
-            while (lastMusicIndex == soundIndex)
-            {
-                soundIndex = Random.Range(0, audioManager.sounds.Length);
-            }
-            lastMusicIndex = soundIndex;
-            audioManager.Play(soundIndex);
+            float songLength = PlayRandom();
             playingMusic = true;
-            yield return new WaitForSeconds(audioManager.sounds[soundIndex].clip.length);
+            yield return new WaitForSeconds(songLength);
             playingMusic = false;
         }
         waitingForMusic = false;
+    }
+
+    protected virtual float PlayRandom()
+    {
+        int soundIndex = Random.Range(0, audioManager.sounds.Length);
+        while (lastMusicIndex == soundIndex)
+        {
+            soundIndex = Random.Range(0, audioManager.sounds.Length);
+        }
+        lastMusicIndex = soundIndex;
+        audioManager.Play(soundIndex);
+        return audioManager.sounds[soundIndex].clip.length;
     }
 }

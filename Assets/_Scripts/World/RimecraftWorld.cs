@@ -150,12 +150,10 @@ public class RimecraftWorld : MonoBehaviour
 
         while (modifications.Count > 0)
         {
-            ConcurrentQueue<VoxelMod> queue;
-            modifications.TryDequeue(out queue);
+            modifications.TryDequeue(out ConcurrentQueue<VoxelMod> queue);
             while (queue.Count > 0)
             {
-                VoxelMod v;
-                queue.TryDequeue(out v);
+                queue.TryDequeue(out VoxelMod v);
                 worldData.SetVoxel(v.position, v.id);
             }
         }

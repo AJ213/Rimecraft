@@ -279,8 +279,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     version: 0.1
-    loadDistance: 7
-    viewDistance: 7
+    loadDistance: 2
+    viewDistance: 2
     mouseSensitivity: 2
   biomes:
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
@@ -757,42 +757,6 @@ PrefabInstance:
     - target: {fileID: 8737026440282011879, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540506, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_ShapeRadius
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540506, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_ShadowNearPlane
-      value: 0.43
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540506, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_UseContactShadow.m_Override
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_Intensity
-      value: 477.4648
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_ColorTemperature
-      value: 9217
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_UseColorTemperature
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_ShadowRadius
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026440696540509, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: m_Shadows.m_Type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8737026441203080330, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
-      propertyPath: antialiasing
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
