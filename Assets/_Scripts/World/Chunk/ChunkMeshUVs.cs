@@ -1,5 +1,5 @@
-﻿using Unity.Entities;
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
+using Unity.Entities;
 
 [InternalBufferCapacity(0)]
 public struct ChunkMeshUVs : IBufferElementData

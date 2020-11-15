@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using TMPro;
 using UnityEngine;
+using Unity.Mathematics;
 
 public class DebugScreen : MonoBehaviour
 {
@@ -8,9 +9,11 @@ public class DebugScreen : MonoBehaviour
 
     private float frameRate;
     private float timer;
+    private Transform player;
 
     private void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         text = GetComponent<TextMeshProUGUI>();
     }
 
@@ -22,19 +25,20 @@ public class DebugScreen : MonoBehaviour
         debugText.AppendLine(" fps");
 
         debugText.Append("Coords: (");
-        debugText.Append(Mathf.FloorToInt(RimecraftWorld.Instance.player.transform.position.x));
+        debugText.Append(Mathf.FloorToInt(player.transform.position.x));
         debugText.Append(", ");
-        debugText.Append(Mathf.FloorToInt(RimecraftWorld.Instance.player.transform.position.y));
+        debugText.Append(Mathf.FloorToInt(player.transform.position.y));
         debugText.Append(", ");
-        debugText.Append(Mathf.FloorToInt(RimecraftWorld.Instance.player.transform.position.z));
+        debugText.Append(Mathf.FloorToInt(player.transform.position.z));
         debugText.AppendLine(")");
 
+        int3 playerCoord = WorldHelper.GetChunkCoordFromPosition(player.transform.position);
         debugText.Append("Chunk: (");
-        debugText.Append(RimecraftWorld.Instance.playerChunkCoord.x);
+        debugText.Append(playerCoord.x);
         debugText.Append(", ");
-        debugText.Append(RimecraftWorld.Instance.playerChunkCoord.y);
+        debugText.Append(playerCoord.y);
         debugText.Append(", ");
-        debugText.Append(RimecraftWorld.Instance.playerChunkCoord.z);
+        debugText.Append(playerCoord.z);
         debugText.AppendLine(")");
 
         text.text = debugText.ToString();

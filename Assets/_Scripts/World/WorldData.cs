@@ -38,25 +38,16 @@ public class WorldData
         seed = worldData.seed;
     }
 
-    public ChunkData RequestChunk(int3 coord, bool create)
+    public static ChunkData GetChunkData(int3 coord)
     {
-        ChunkData c;
-
         if (chunks.ContainsKey(coord))
         {
-            c = chunks[coord];
-        }
-        else if (!create)
-        {
-            c = null;
+            return chunks[coord];
         }
         else
         {
-            LoadChunk(coord);
-            c = chunks[coord];
+            return null;
         }
-
-        return c;
     }
 
     public static void LoadChunk(int3 coord)
@@ -73,25 +64,25 @@ public class WorldData
             return;
         }
 
-        WorldData.chunks.TryAdd(coord, new ChunkData(coord));
-        ChunkData.Populate(WorldData.chunks[coord]);
+        WorldData.chunks.TryAdd(coord, GenerateData.Chunk(coord));
     }
 
-    public void SetVoxel(int3 globalPosition, ushort value)
+    public static void SetVoxel(int3 globalPosition, ushort value)
     {
-        ChunkData chunk = RequestChunk(WorldHelper.GetChunkCoordFromPosition(globalPosition), true);
+        ChunkData chunk = GetChunkData(WorldHelper.GetChunkCoordFromPosition(globalPosition));
 
-        int3 voxel = WorldHelper.GetVoxelLocalPositionInChunk(globalPosition);
+        int3 voxelPos = WorldHelper.GetVoxelLocalPositionInChunk(globalPosition);
 
-        chunk.ModifyVoxel(voxel, value);
+        chunk.ModifyVoxel(voxelPos, value);
     }
 
-    public VoxelState GetVoxel(int3 globalPosition)
+    public static VoxelData GetVoxel(int3 globalPosition)
     {
-        ChunkData chunk = RequestChunk(WorldHelper.GetChunkCoordFromPosition(globalPosition), false);
+        ChunkData chunk = GetChunkData(WorldHelper.GetChunkCoordFromPosition(globalPosition));
         if (chunk == null)
         {
-            return null;
+            /*            Debug.Log("Yikes");*/
+            return new VoxelData();
         }
 
         int3 voxel = WorldHelper.GetVoxelLocalPositionInChunk(globalPosition);

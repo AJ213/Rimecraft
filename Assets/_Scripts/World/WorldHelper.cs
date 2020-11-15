@@ -27,27 +27,30 @@ public static class WorldHelper
                         Mathf.FloorToInt(localPosition.z) + (Constants.ChunkSizeZ * coord.z));
     }
 
-    public static Chunk GetChunkFromPosition(float3 globalPosition)
+    public static ChunkMeshData GetChunkMeshFromPosition(float3 globalPosition)
     {
         int3 coord = GetChunkCoordFromPosition(globalPosition);
-        if (RimecraftWorld.Instance.chunks.ContainsKey(coord))
+
+        if (RimecraftWorld.chunkMeshes.ContainsKey(coord))
         {
-            return RimecraftWorld.Instance.chunks[GetChunkCoordFromPosition(globalPosition)];
+            return RimecraftWorld.chunkMeshes[coord];
         }
         else
         {
-            // This is causing a bug likely that we need to fix
-            //Debug.Log("Chunk doesn't exist at " + coord);
-            return null;
+            ChunkMeshData mesh = new ChunkMeshData(coord);
+            RimecraftWorld.chunkMeshes.TryAdd(coord, mesh);
+            mesh.UpdateMesh();
+            return mesh;
         }
     }
 
-    public static VoxelState GetVoxelFromPosition(float3 globalPosition)
+    public static VoxelData GetVoxelFromPosition(float3 globalPosition)
     {
-        Chunk chunk = GetChunkFromPosition(globalPosition);
-        if (chunk == null || !WorldData.chunks.ContainsKey(chunk.coord))
+        ChunkMeshData chunk = GetChunkMeshFromPosition(globalPosition);
+        if (!WorldData.chunks.ContainsKey(chunk.coord))
         {
-            return null;
+            Debug.Log("No good");
+            return new VoxelData();
         }
         else
         {

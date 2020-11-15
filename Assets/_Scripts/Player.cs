@@ -87,7 +87,10 @@ public class Player : MonoBehaviour
             // Destroy Block
             if (Input.GetMouseButtonDown(0))
             {
-                WorldHelper.GetChunkFromPosition(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+                WorldData.chunks.TryGetValue(WorldHelper.GetChunkCoordFromPosition(highlightBlock.position), out ChunkData value);
+                value.ModifyVoxel(WorldHelper.GetVoxelLocalPositionInChunk(new int3(Mathf.FloorToInt(highlightBlock.position.x),
+                    Mathf.FloorToInt(highlightBlock.position.y), Mathf.FloorToInt(highlightBlock.position.z))),
+                0);
             }
 
             // Build Block
@@ -95,7 +98,10 @@ public class Player : MonoBehaviour
             {
                 if (toolbar.slots[toolbar.slotIndex].HasItem)
                 {
-                    WorldHelper.GetChunkFromPosition(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
+                    WorldData.chunks.TryGetValue(WorldHelper.GetChunkCoordFromPosition(placeBlock.position), out ChunkData value);
+                    value.ModifyVoxel(WorldHelper.GetVoxelLocalPositionInChunk(new int3(Mathf.FloorToInt(placeBlock.position.x),
+                        Mathf.FloorToInt(placeBlock.position.y), Mathf.FloorToInt(placeBlock.position.z))),
+                    toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
                     toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
                 }
             }

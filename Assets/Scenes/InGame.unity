@@ -279,17 +279,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     version: 0.1
-    loadDistance: 3
-    viewDistance: 3
+    loadDistance: 2
+    viewDistance: 2
     mouseSensitivity: 2
   biomes:
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
-  JobsEnabled: 1
-  player: {fileID: 332412510}
   spawnPosition: {x: 0, y: 0, z: 0}
-  material: {fileID: 2100000, guid: a2057a62d0e121f43922d28e5ccb4da9, type: 2}
-  transparentMaterial: {fileID: 2100000, guid: cca088c3de9907d43a823f0496b6a4aa, type: 2}
+  material: {fileID: 2100000, guid: cca088c3de9907d43a823f0496b6a4aa, type: 2}
   blockTypes:
   - {fileID: 11400000, guid: e9f7b72fa7fb21c4cb4d258f980dde16, type: 2}
   - {fileID: 11400000, guid: fe2309b4a9c41cd4bbdaa8d40f0c4b4d, type: 2}
@@ -298,15 +295,24 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 67e0362cf7016f0438ee1a14c3b3e522, type: 2}
   - {fileID: 11400000, guid: 3caa91537269c274d80da87fa143e183, type: 2}
   - {fileID: 11400000, guid: 65778f50f921083419a4b19003b27012, type: 2}
-  playerChunkCoord:
-    x: 0
-    y: 0
-    z: 0
   debugScreen: {fileID: 2060800638}
   worldData:
     worldName: Default
     seed: 0
   appPath: 
+--- !u!114 &1397703397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397703394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cadd1fe610b9fa54f9bb3ef2969fbca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  JobsEnabled: 1
 --- !u!1 &2060800638 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3774411707447604822, guid: 63ba980d4c604f244b2b64ba5d099ce2, type: 3}
@@ -714,6 +720,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8737026440282011877, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 8737026440282011879, guid: 06211bb315a180d43aadde7a77439fb0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -809,15 +819,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7966238039799338196, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 111.94834
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7966238039799338196, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 183.54193
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7966238039799338196, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 169.01454
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7966238039799338196, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
       propertyPath: m_LocalRotation.x
@@ -849,6 +859,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7966238039799338196, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051988338129953946, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051988338129953946, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051988338129953946, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051988338809226555, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051988338809226555, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051988338809226555, guid: e7e605ecfe1363a41a2b8b39db0a9ea0, type: 3}
+      propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
