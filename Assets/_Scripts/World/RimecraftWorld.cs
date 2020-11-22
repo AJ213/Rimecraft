@@ -231,6 +231,7 @@ public class RimecraftWorld : MonoBehaviour
                 }
             }
         }
+
         if (JobsEnabled)
         {
             if (!newChunks)
@@ -273,7 +274,7 @@ public class RimecraftWorld : MonoBehaviour
         VoxelState voxel = worldData.GetVoxel(globalPosition);
         if (voxel == null)
         {
-            Debug.Log("Null block at " + globalPosition);
+            //Debug.Log("Null block at " + globalPosition);
             return 0;
         }
 

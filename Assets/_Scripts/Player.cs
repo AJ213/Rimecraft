@@ -21,8 +21,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float jumpForce = 5;
     private bool jumpRequest;
-    [SerializeField] public AudioManager playerSounds;
-    [SerializeField] public AudioManager playerFootsteps;
+    public AudioManager playerSounds;
 
     // Moving
     [SerializeField] private bool isSprinting = false;
@@ -90,14 +89,15 @@ public class Player : MonoBehaviour
             this.GetComponent<FootstepsPlayer>().PlayFootstep();
         }
 
+        // Destroy Block
+        if (Input.GetMouseButtonDown(0))
+        {
+            GameObject projectile = (GameObject)Instantiate(Resources.Load("Mining Projectile"), Camera.main.transform.position, Quaternion.identity);
+            projectile.GetComponent<Projectile>().Fire(Camera.main.transform.forward, 5, 10);
+        }
+
         if (highlightBlock.gameObject.activeSelf)
         {
-            // Destroy Block
-            if (Input.GetMouseButtonDown(0))
-            {
-                WorldHelper.GetChunkFromPosition(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
-            }
-
             // Build Block
             if (Input.GetMouseButtonDown(1))
             {

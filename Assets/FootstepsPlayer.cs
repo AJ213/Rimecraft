@@ -23,17 +23,11 @@ public class FootstepsPlayer : MonoBehaviour
         stoneBlocks.Add(5);
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-    }
-
     public void PlayFootstep()
     {
         if (!playingFootstep && !waitingForFootstep)
         {
             ushort groundBlockID = RimecraftWorld.Instance.CheckForVoxel((new Vector3(this.transform.position.x, this.transform.position.y - 0.1f, this.transform.position.z)).FloorToInt3());
-            Debug.Log(groundBlockID);
             if (snowBlocks.Contains(groundBlockID))
             {
                 StartCoroutine(PlayRandomFootstep(new Vector2Int(0, 3)));
@@ -48,9 +42,9 @@ public class FootstepsPlayer : MonoBehaviour
     private IEnumerator PlayRandomFootstep(Vector2Int range)
     {
         waitingForFootstep = true;
-        yield return new WaitForSeconds(footstepInterval);
         if (!playingFootstep)
         {
+            yield return new WaitForSeconds(footstepInterval);
             float footstepLength = PlayRandom(range);
             playingFootstep = true;
             yield return new WaitForSeconds(footstepLength);

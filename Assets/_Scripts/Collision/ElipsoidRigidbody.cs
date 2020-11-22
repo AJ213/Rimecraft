@@ -6,7 +6,7 @@ using UnityEngine;
 public class ElipsoidRigidbody : MonoBehaviour
 {
     [SerializeField] private float objectWidth = 0.25f;
-    [SerializeField] public float objectHeight = 1.6f;
+    public float objectHeight = 1.6f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private bool usesGravity = false;
     [SerializeField] private Vector3 velocity;
@@ -14,40 +14,38 @@ public class ElipsoidRigidbody : MonoBehaviour
     public float VerticalMomentum { get; set; }
     public bool IsGrounded { get; set; }
 
-    public bool Back
+    private bool Colliding(int3 position)
     {
-        get
+        bool result = RimecraftWorld.Instance.CheckForVoxel(position) == 0;
+        for (int i = 1; i <= (int)objectHeight; i++)
         {
-            int3 position = new int3(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z - (objectWidth - velocity.z)));
-            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
+            result &= RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, i, 0)) == 0;
         }
+        return !result;
     }
 
-    public bool Front
+    public bool BackCollision()
     {
-        get
-        {
-            int3 position = new int3(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z + (objectWidth + velocity.z)));
-            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
-        }
+        int3 position = new int3(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z - (objectWidth - velocity.z)));
+        return Colliding(position);
     }
 
-    public bool Left
+    public bool FrontCollision()
     {
-        get
-        {
-            int3 position = new int3(Mathf.FloorToInt(transform.position.x - (objectWidth - velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
-            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
-        }
+        int3 position = new int3(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z + (objectWidth + velocity.z)));
+        return Colliding(position);
     }
 
-    public bool Right
+    public bool LeftCollision()
     {
-        get
-        {
-            int3 position = new int3(Mathf.FloorToInt(transform.position.x + (objectWidth + velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
-            return RimecraftWorld.Instance.CheckForVoxel(position) != 0 || RimecraftWorld.Instance.CheckForVoxel(position + new int3(0, 1, 0)) != 0;
-        }
+        int3 position = new int3(Mathf.FloorToInt(transform.position.x - (objectWidth - velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
+        return Colliding(position);
+    }
+
+    public bool RightCollision()
+    {
+        int3 position = new int3(Mathf.FloorToInt(transform.position.x + (objectWidth + velocity.x)), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z));
+        return Colliding(position);
     }
 
     public void CalculateVelocity(float horizontal, float vertical, float speed)
@@ -63,14 +61,55 @@ public class ElipsoidRigidbody : MonoBehaviour
         velocity = ((transform.forward * vertical) + (transform.right * horizontal)) * Time.fixedDeltaTime * speed;
 
         // Apply vertical momentum (falling/jumping).
-        velocity += Vector3.up * VerticalMomentum * Time.fixedDeltaTime;
+        if (usesGravity)
+        {
+            velocity += Vector3.up * VerticalMomentum * Time.fixedDeltaTime;
+        }
 
-        if ((velocity.z > 0 && Front) || (velocity.z < 0 && Back))
+        if ((velocity.z > 0 && FrontCollision()) || (velocity.z < 0 && BackCollision()))
         {
             velocity.z = 0;
         }
 
-        if ((velocity.x > 0 && Right) || (velocity.x < 0 && Left))
+        if ((velocity.x > 0 && RightCollision()) || (velocity.x < 0 && LeftCollision()))
+        {
+            velocity.x = 0;
+        }
+
+        if (velocity.y < 0)
+        {
+            velocity.y = CheckDownSpeed(velocity.y);
+        }
+        else if (velocity.y > 0)
+        {
+            velocity.y = CheckUpSpeed(velocity.y);
+        }
+    }
+
+    public void CalculateVelocity(Vector3 directionVect, float speed)
+    {
+        // Affect verical momentum with gravity.
+        if (VerticalMomentum > gravity && usesGravity)
+        {
+            VerticalMomentum += Time.fixedDeltaTime * gravity;
+        }
+
+        // if we're sprinting, use the sprint multiplier.
+
+        velocity = directionVect * Time.fixedDeltaTime * speed;
+
+        // Apply vertical momentum (falling/jumping).
+        if (usesGravity)
+        {
+            velocity += Vector3.up * VerticalMomentum * Time.fixedDeltaTime;
+        }
+
+        if ((velocity.z > 0 && FrontCollision()) || (velocity.z < 0 && BackCollision()))
+        {
+            velocity.z = 0;
+        }
+
+        if ((velocity.x > 0 && RightCollision()) || (velocity.x < 0 && LeftCollision()))
         {
             velocity.x = 0;
         }
@@ -89,6 +128,7 @@ public class ElipsoidRigidbody : MonoBehaviour
     {
         // Grabs the top right position block relative to object
         float widthAdjustment = (objectWidth);
+
         if (index == 0)
         {
             return new int3(Mathf.FloorToInt(transform.position.x - widthAdjustment), Mathf.FloorToInt(transform.position.y + verticalOffset), Mathf.FloorToInt(transform.position.z - widthAdjustment));
@@ -107,12 +147,12 @@ public class ElipsoidRigidbody : MonoBehaviour
         }
     }
 
-    private bool ObjectObstructedVerticallyAt(float height)
+    public bool ObjectObstructedVerticallyAt(float height)
     {
-        return ((RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(0, height)) != 0) ||
-            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(1, height)) != 0 ||
-            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(2, height)) != 0 ||
-            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(3, height)) != 0);
+        return !(RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(0, height)) == 0 &&
+            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(1, height)) == 0 &&
+            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(2, height)) == 0 &&
+            RimecraftWorld.Instance.CheckForVoxel(ObjectWidthBlockLocations(3, height)) == 0);
     }
 
     private void OnDrawGizmos()
