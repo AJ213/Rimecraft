@@ -1,5 +1,70 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1667055156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1667055157}
+  - component: {fileID: 1667055158}
+  m_Layer: 0
+  m_Name: Player Sounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1667055157
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667055156}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2754096190583802843}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1667055158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667055156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80aa5b780d47e734f91277a47faee248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mixerGroup: {fileID: 24300002, guid: bf46b738770b3244c8d4979f86546b42, type: 2}
+  sounds:
+  - name: Jump
+    clip: {fileID: 8300000, guid: 930d890602eb8194f9bc48f7b8e8d00c, type: 3}
+    volume: 1
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0
+    priority: 0
+    loop: 0
+    mixerGroup: {fileID: 24300002, guid: bf46b738770b3244c8d4979f86546b42, type: 2}
+    source: {fileID: 0}
+  - name: ToolbarSwap
+    clip: {fileID: 8300000, guid: 09d16fc81c6c77e49a3b66cd8b3a290c, type: 3}
+    volume: 1
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0
+    priority: 5
+    loop: 0
+    mixerGroup: {fileID: 24300002, guid: bf46b738770b3244c8d4979f86546b42, type: 2}
+    source: {fileID: 0}
 --- !u!1 &1686687125
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,7 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxVolume: 0.7
-  minValue: 0
+  minValue: 0.1
   volumeChangeSpeed: 0.3
   yValue: -10
 --- !u!1 &285745873430596178
@@ -102,6 +167,7 @@ Transform:
   - {fileID: 8737026440336785044}
   - {fileID: 1686687126}
   - {fileID: 1730687751835815091}
+  - {fileID: 1667055157}
   m_Father: {fileID: 8737026440282011879}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -394,6 +460,7 @@ GameObject:
   - component: {fileID: 8737026440282011876}
   - component: {fileID: 8737026440282011865}
   - component: {fileID: 8737026440282011878}
+  - component: {fileID: 918696050}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -435,6 +502,8 @@ MonoBehaviour:
   highlightBlock: {fileID: 0}
   placeBlock: {fileID: 0}
   jumpForce: 5
+  playerSounds: {fileID: 1667055158}
+  playerFootsteps: {fileID: 0}
   isSprinting: 0
   sprintSpeed: 6
   walkSpeed: 3
@@ -530,6 +599,20 @@ MonoBehaviour:
     loop: 0
     mixerGroup: {fileID: 24300002, guid: bf46b738770b3244c8d4979f86546b42, type: 2}
     source: {fileID: 0}
+--- !u!114 &918696050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8737026440282011877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c428f7c94ee2a549adbf90257608e8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playingFootstep: 0
+  footstepInterval: 0.1
 --- !u!1 &8737026440336785045
 GameObject:
   m_ObjectHideFlags: 0

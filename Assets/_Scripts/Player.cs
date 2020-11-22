@@ -1,5 +1,6 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
@@ -16,14 +17,16 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform placeBlock = null;
 
     // Jumping and falling
-
     private ElipsoidRigidbody rbody;
+
     [SerializeField] private float jumpForce = 5;
     private bool jumpRequest;
+    [SerializeField] public AudioManager playerSounds;
+    [SerializeField] public AudioManager playerFootsteps;
 
     // Moving
-
     [SerializeField] private bool isSprinting = false;
+
     [SerializeField] private float sprintSpeed = 6;
     [SerializeField] private float walkSpeed = 3;
     private float horizontal;
@@ -82,6 +85,11 @@ public class Player : MonoBehaviour
             jumpRequest = true;
         }
 
+        if (rbody.IsGrounded && (horizontal != 0 || vertical != 0))
+        {
+            this.GetComponent<FootstepsPlayer>().PlayFootstep();
+        }
+
         if (highlightBlock.gameObject.activeSelf)
         {
             // Destroy Block
@@ -104,6 +112,7 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
+        playerSounds.Play("Jump");
         rbody.VerticalMomentum = jumpForce;
         rbody.IsGrounded = false;
         jumpRequest = false;

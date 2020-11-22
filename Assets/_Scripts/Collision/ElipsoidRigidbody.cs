@@ -6,7 +6,7 @@ using UnityEngine;
 public class ElipsoidRigidbody : MonoBehaviour
 {
     [SerializeField] private float objectWidth = 0.25f;
-    [SerializeField] private float objectHeight = 1.6f;
+    [SerializeField] public float objectHeight = 1.6f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private bool usesGravity = false;
     [SerializeField] private Vector3 velocity;

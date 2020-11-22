@@ -30,13 +30,13 @@ public class PlayAudioAtArea : MonoBehaviour
     {
         if (!player.Equals(lastLocation))
         {
-            if (!IsVoxelAboveOrBelow(5) || player.position.y < yValue)
+            if (player.position.y < yValue)
             {
-                currentVolume = Mathf.Clamp(currentVolume - (volumeChangeSpeed * Time.deltaTime), minValue, maxVolume);
-                if (currentVolume == minValue)
-                {
-                    lastLocation = player.position.FloorToInt3();
-                }
+                MakeWindSilent(0);
+            }
+            else if (!IsVoxelAboveOrBelow(5))
+            {
+                MakeWindSilent(minValue);
             }
             else
             {
@@ -47,6 +47,15 @@ public class PlayAudioAtArea : MonoBehaviour
                 }
             }
             wind.volume = currentVolume;
+        }
+    }
+
+    private void MakeWindSilent(float minVolume)
+    {
+        currentVolume = Mathf.Clamp(currentVolume - (volumeChangeSpeed * Time.deltaTime), minVolume, maxVolume);
+        if (currentVolume == minVolume)
+        {
+            lastLocation = player.position.FloorToInt3();
         }
     }
 

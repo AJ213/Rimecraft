@@ -23,6 +23,7 @@ public class Toolbar : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
         {
+            player.playerSounds.Play("ToolbarSwap");
             if (scroll > 0)
             {
                 slotIndex--;
