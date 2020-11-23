@@ -11,13 +11,16 @@ public class Player : MonoBehaviour
 
     // Placing Blocks
 
-    [SerializeField] private float checkIncrement = 0.1f;
+    [SerializeField] private float checkIncrement = 0.01f;
     [SerializeField] private float reach = 8;
     [SerializeField] private Transform highlightBlock = null;
     [SerializeField] private Transform placeBlock = null;
 
     // Jumping and falling
     private ElipsoidRigidbody rbody;
+
+    [SerializeField] private float footstepInterval = 0.4f;
+    [SerializeField] private float footstepIntervalSprinting = 0.25f;
 
     [SerializeField] private float jumpForce = 5;
     private bool jumpRequest;
@@ -84,14 +87,24 @@ public class Player : MonoBehaviour
             jumpRequest = true;
         }
 
-        if (rbody.IsGrounded && (horizontal != 0 || vertical != 0))
+        if (rbody.IsGrounded && (Mathf.Abs(horizontal) >= 0.1f || Mathf.Abs(vertical) >= 0.1f))
         {
-            this.GetComponent<FootstepsPlayer>().PlayFootstep();
+            float footstepSpeed = 0;
+            if (isSprinting)
+            {
+                footstepSpeed = footstepIntervalSprinting;
+            }
+            else
+            {
+                footstepSpeed = footstepInterval;
+            }
+            this.GetComponent<FootstepsPlayer>().PlayFootstep(footstepSpeed);
         }
 
         // Destroy Block
         if (Input.GetMouseButtonDown(0))
         {
+            playerSounds.Play("WeaponUse");
             GameObject projectile = (GameObject)Instantiate(Resources.Load("Mining Projectile"), Camera.main.transform.position, Quaternion.identity);
             projectile.GetComponent<Projectile>().Fire(Camera.main.transform.forward, 5, 10);
         }
@@ -103,6 +116,7 @@ public class Player : MonoBehaviour
             {
                 if (toolbar.slots[toolbar.slotIndex].HasItem)
                 {
+                    playerSounds.Play("BlockPlace");
                     WorldHelper.GetChunkFromPosition(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
                     toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
                 }

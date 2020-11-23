@@ -6,11 +6,9 @@ public class FootstepsPlayer : MonoBehaviour
 {
     private List<ushort> snowBlocks = new List<ushort>();
     private List<ushort> stoneBlocks = new List<ushort>();
-    public bool playingFootstep = false;
     private bool waitingForFootstep = false;
 
     private AudioManager audioManager;
-    [SerializeField] private float footstepInterval = 0.1f;
 
     private void Start()
     {
@@ -23,33 +21,27 @@ public class FootstepsPlayer : MonoBehaviour
         stoneBlocks.Add(5);
     }
 
-    public void PlayFootstep()
+    public void PlayFootstep(float speed)
     {
-        if (!playingFootstep && !waitingForFootstep)
+        if (!waitingForFootstep)
         {
             ushort groundBlockID = RimecraftWorld.Instance.CheckForVoxel((new Vector3(this.transform.position.x, this.transform.position.y - 0.1f, this.transform.position.z)).FloorToInt3());
             if (snowBlocks.Contains(groundBlockID))
             {
-                StartCoroutine(PlayRandomFootstep(new Vector2Int(0, 3)));
+                StartCoroutine(PlayRandomFootstep(new Vector2Int(0, 3), speed));
             }
             else if (stoneBlocks.Contains(groundBlockID))
             {
-                StartCoroutine(PlayRandomFootstep(new Vector2Int(3, 6)));
+                StartCoroutine(PlayRandomFootstep(new Vector2Int(3, 6), speed));
             }
         }
     }
 
-    private IEnumerator PlayRandomFootstep(Vector2Int range)
+    private IEnumerator PlayRandomFootstep(Vector2Int range, float speed)
     {
         waitingForFootstep = true;
-        if (!playingFootstep)
-        {
-            yield return new WaitForSeconds(footstepInterval);
-            float footstepLength = PlayRandom(range);
-            playingFootstep = true;
-            yield return new WaitForSeconds(footstepLength);
-            playingFootstep = false;
-        }
+        yield return new WaitForSeconds(speed);
+        PlayRandom(range);
         waitingForFootstep = false;
     }
 
