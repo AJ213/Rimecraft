@@ -49,22 +49,24 @@ public class Chunk
 
     public void UpdateChunk()
     {
-        ClearMeshData();
-
-        for (int y = 0; y < Constants.ChunkSizeY; y++)
+        if (chunkData != null)
         {
-            for (int x = 0; x < Constants.ChunkSizeX; x++)
+            ClearMeshData();
+            for (int y = 0; y < Constants.ChunkSizeY; y++)
             {
-                for (int z = 0; z < Constants.ChunkSizeZ; z++)
+                for (int x = 0; x < Constants.ChunkSizeX; x++)
                 {
-                    if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
+                    for (int z = 0; z < Constants.ChunkSizeZ; z++)
                     {
-                        UpdateMeshData(new int3(x, y, z));
+                        if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
+                        {
+                            UpdateMeshData(new int3(x, y, z));
+                        }
                     }
                 }
             }
+            RimecraftWorld.Instance.chunksToDraw.Enqueue(this);
         }
-        RimecraftWorld.Instance.chunksToDraw.Enqueue(this);
     }
 
     public void EditVoxel(float3 globalPosition, ushort newID)
@@ -84,7 +86,11 @@ public class Chunk
 
             if (!WorldHelper.IsVoxelGlobalPositionInChunk(currentVoxel, coord))
             {
-                RimecraftWorld.Instance.AddChunkToUpdate(WorldHelper.GetChunkFromPosition(currentVoxel), true);
+                Chunk chunk = WorldHelper.GetChunkFromPosition(currentVoxel);
+                if (chunk != null)
+                {
+                    RimecraftWorld.Instance.AddChunkToUpdate(chunk, true);
+                }
             }
         }
     }
