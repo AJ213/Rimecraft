@@ -16,7 +16,7 @@ MonoBehaviour:
   isSolid: 1
   meshData: {fileID: 11400000, guid: dd6ea5fafad4a8d498c578d02938005e, type: 2}
   renderNeightborFaces: 0
-  icon: {fileID: 21300000, guid: e1c03646ae3d37047a2bdbed7657f4bd, type: 3}
+  icon: {fileID: 21300000, guid: 58bc5d8af4da8104eb75be64a625b2b8, type: 3}
   backFaceTexture: 1
   frontFaceTexture: 1
   topFaceTexture: 1
