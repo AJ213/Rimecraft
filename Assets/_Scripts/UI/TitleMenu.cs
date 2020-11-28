@@ -48,6 +48,7 @@ public class TitleMenu : MonoBehaviour
 
     private void Start()
     {
+        RimecraftWorld.settings = settings;
         volumeSlider.value = settings.volume;
         UpdateVolumeSlider();
     }

@@ -57,8 +57,8 @@ public class Player : MonoBehaviour
                 rbody.CalculateVelocity(horizontal, vertical, walkSpeed);
             }
 
-            transform.Rotate(Vector3.up * mouseHorizontal * RimecraftWorld.Instance.settings.mouseSensitivity);
-            cam.Rotate(Vector3.right * -mouseVertical * RimecraftWorld.Instance.settings.mouseSensitivity);
+            transform.Rotate(Vector3.up * mouseHorizontal * RimecraftWorld.settings.mouseSensitivity);
+            cam.Rotate(Vector3.right * -mouseVertical * RimecraftWorld.settings.mouseSensitivity);
         }
     }
 

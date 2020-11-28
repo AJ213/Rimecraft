@@ -11,7 +11,7 @@ using System.Configuration;
 
 public class RimecraftWorld : MonoBehaviour
 {
-    public Settings settings;
+    public static Settings settings;
     public BiomeAttributes[] biomes;
 
     public bool JobsEnabled = false;
@@ -21,6 +21,7 @@ public class RimecraftWorld : MonoBehaviour
 
     public Material material = null;
     public Material transparentMaterial = null;
+    public Material shinyMaterial = null;
     public BlockType[] blockTypes = null;
 
     [HideInInspector]
@@ -65,6 +66,12 @@ public class RimecraftWorld : MonoBehaviour
         //Debug.Log("Generating new world using seed " + WorldData.seed);
 
         //worldData = SaveSystem.LoadWorld(WorldData.worldName, WorldData.seed);
+        if (settings == null)
+        {
+            settings = new Settings();
+            settings.viewDistance = 2;
+            settings.mouseSensitivity = 2;
+        }
 
         UnityEngine.Random.InitState(WorldData.seed);
         Camera.main.farClipPlane = Mathf.Sqrt(2) * Constants.ChunkSizeX * 2 * settings.viewDistance;
@@ -208,16 +215,16 @@ public class RimecraftWorld : MonoBehaviour
         playerLastChunkCoord = playerChunkCoord;
 
         // This is our loadDistance * 2 cubed. Shouldn't ever be bigger than this size for the array
-        int size = 8 * settings.loadDistance * settings.loadDistance * settings.loadDistance;
+        int size = 8 * settings.viewDistance * settings.viewDistance * settings.viewDistance;
         NativeArray<int3> positions = new NativeArray<int3>(size, Allocator.Persistent);
         int usageCount = 0;
         bool newChunks = false;
 
-        for (int x = coord.x - settings.loadDistance; x < coord.x + settings.loadDistance; x++)
+        for (int x = coord.x - settings.viewDistance; x < coord.x + settings.viewDistance; x++)
         {
-            for (int y = coord.y - settings.loadDistance; y < coord.y + settings.loadDistance; y++)
+            for (int y = coord.y - settings.viewDistance; y < coord.y + settings.viewDistance; y++)
             {
-                for (int z = coord.z - settings.loadDistance; z < coord.z + settings.loadDistance; z++)
+                for (int z = coord.z - settings.viewDistance; z < coord.z + settings.viewDistance; z++)
                 {
                     int3 location = new int3(x, y, z);
                     if (!chunks.ContainsKey(location))

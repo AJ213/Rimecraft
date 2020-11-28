@@ -13,7 +13,8 @@ public class Chunk
     private List<Vector3> vertices = new List<Vector3>();
     private List<int> triangles = new List<int>();
     private List<int> transparentTriangles = new List<int>();
-    private Material[] materials = new Material[2];
+    private List<int> shinyTriangles = new List<int>();
+    private Material[] materials = new Material[3];
     private List<Vector2> uvs = new List<Vector2>();
     private List<Vector3> normals = new List<Vector3>();
 
@@ -34,6 +35,7 @@ public class Chunk
 
         materials[0] = RimecraftWorld.Instance.material;
         materials[1] = RimecraftWorld.Instance.transparentMaterial;
+        materials[2] = RimecraftWorld.Instance.shinyMaterial;
         meshRenderer.materials = materials;
 
         chunkObject.transform.SetParent(RimecraftWorld.Instance.transform);
@@ -113,7 +115,15 @@ public class Chunk
                     faceVertCount++;
                 }
 
-                if (!voxel.Properties.renderNeightborFaces)
+                // spaghetti ice reflection programming
+                if (voxel.id == 2)
+                {
+                    for (int i = 0; i < voxel.Properties.meshData.faces[p].triangles.Length; i++)
+                    {
+                        shinyTriangles.Add(vertexIndex + voxel.Properties.meshData.faces[p].triangles[i]);
+                    }
+                }
+                else if (!voxel.Properties.renderNeightborFaces)
                 {
                     for (int i = 0; i < voxel.Properties.meshData.faces[p].triangles.Length; i++)
                     {
@@ -140,9 +150,10 @@ public class Chunk
             vertices = vertices.ToArray(),
             uv = uvs.ToArray()
         };
-        mesh.subMeshCount = 2;
+        mesh.subMeshCount = 3;
         mesh.SetTriangles(triangles.ToArray(), 0);
         mesh.SetTriangles(transparentTriangles.ToArray(), 1);
+        mesh.SetTriangles(shinyTriangles.ToArray(), 2);
         mesh.normals = normals.ToArray();
         meshFilter.mesh = mesh;
     }
@@ -153,6 +164,7 @@ public class Chunk
         vertices.Clear();
         triangles.Clear();
         transparentTriangles.Clear();
+        shinyTriangles.Clear();
         uvs.Clear();
         normals.Clear();
     }

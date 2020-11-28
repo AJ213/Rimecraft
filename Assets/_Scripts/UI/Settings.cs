@@ -9,8 +9,6 @@ public class Settings
     public string version = "0.1";
 
     [Header("Performance")]
-    public int loadDistance = 16;
-
     public int viewDistance = 8;
 
     [Range(0.1f, 10f)]
