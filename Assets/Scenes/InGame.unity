@@ -326,12 +326,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b66c6f1a6b5869478a50dd54c20a84e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settings:
-    version: 0.1
-    loadDistance: 2
-    viewDistance: 2
-    mouseSensitivity: 2
-    volume: 0.25
   biomes:
   - {fileID: 11400000, guid: f7000ec52459bd74385c635a1ac7cacd, type: 2}
   - {fileID: 11400000, guid: f3fc626f9c391a440a35a9208c162ce8, type: 2}
@@ -341,6 +335,7 @@ MonoBehaviour:
   spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: a2057a62d0e121f43922d28e5ccb4da9, type: 2}
   transparentMaterial: {fileID: 2100000, guid: cca088c3de9907d43a823f0496b6a4aa, type: 2}
+  shinyMaterial: {fileID: 2100000, guid: a24803d6c8005254b9e8338db7fb7c22, type: 2}
   blockTypes:
   - {fileID: 11400000, guid: e9f7b72fa7fb21c4cb4d258f980dde16, type: 2}
   - {fileID: 11400000, guid: fe2309b4a9c41cd4bbdaa8d40f0c4b4d, type: 2}
