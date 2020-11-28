@@ -27,6 +27,7 @@ public class RimecraftWorld : MonoBehaviour
     public Dictionary<int3, Chunk> chunks = new Dictionary<int3, Chunk>();
 
     private HashSet<int3> activeChunks = new HashSet<int3>();
+
     public int3 playerChunkCoord;
     private int3 playerLastChunkCoord;
 
@@ -44,9 +45,7 @@ public class RimecraftWorld : MonoBehaviour
     private static RimecraftWorld instance;
     public static RimecraftWorld Instance => instance;
 
-    public WorldData worldData;
-
-    public string appPath;
+    public static WorldData worldData;
 
     private void Awake()
     {
@@ -58,17 +57,16 @@ public class RimecraftWorld : MonoBehaviour
         {
             instance = this;
         }
-
-        appPath = Application.persistentDataPath;
     }
 
     private void Start()
     {
-        Debug.Log("Generating new world using seed " + VoxelData.seed);
+        worldData = new WorldData("null", WorldData.seed);
+        //Debug.Log("Generating new world using seed " + WorldData.seed);
 
-        worldData = SaveSystem.LoadWorld("Prototype", VoxelData.seed);
+        //worldData = SaveSystem.LoadWorld(WorldData.worldName, WorldData.seed);
 
-        UnityEngine.Random.InitState(VoxelData.seed);
+        UnityEngine.Random.InitState(WorldData.seed);
         Camera.main.farClipPlane = Mathf.Sqrt(2) * Constants.ChunkSizeX * 2 * settings.viewDistance;
 
         spawnPosition = new Vector3(0, 5, 0);
@@ -314,62 +312,27 @@ public class RimecraftWorld : MonoBehaviour
 
     public static ushort SamplePosition(int3 globalPosition, BiomeAttributes[] biomes)
     {
-        int solidGroundHeight = 0;
-        float sumOfHeights = 0;
-        int count = 0;
-        float strongestWeight = 0;
-        int strongestBiomeIndex = 0;
-
+        // Set biome to the one with the strongest weight.
+        int terrainHeight = 0;
+        BiomeAttributes mainBiome = biomes[0];
         for (int i = 0; i < biomes.Length; i++)
         {
-            float weight = Noise.Get2DSimplex(new Vector2(globalPosition.x, globalPosition.z), biomes[i].offset, biomes[i].scale);
-
-            // Keep track of which weight is strongest.
-            if (weight > strongestWeight)
-            {
-                strongestWeight = weight;
-                strongestBiomeIndex = i;
-            }
-
-            // Get the height of the terrain (for the current biome) and multiply it by its weight.
-            float height = biomes[i].terrainHeight * Noise.Get2DSimplex(new Vector2(globalPosition.x, globalPosition.z), 2 * biomes[i].offset, biomes[i].terrainScale) * weight;
-
-            // If the height value is greater 0 add it to the sum of heights.
-            if (height > 0)
-            {
-                sumOfHeights += height;
-                count++;
-            }
+            terrainHeight += Mathf.FloorToInt(biomes[i].terrainHeight * Noise.Get2DSimplex(new Vector2(globalPosition.x, globalPosition.z), 2 * biomes[i].offset, biomes[i].terrainScale));
         }
-
-        // Set biome to the one with the strongest weight.
-        BiomeAttributes biome = biomes[strongestBiomeIndex];
-
-        // Get the average of the heights.
-        if (count == 0)
-        {
-            count = 1;
-        }
-        sumOfHeights /= count;
-
-        int terrainHeight = Mathf.FloorToInt(sumOfHeights + solidGroundHeight);
+        terrainHeight /= biomes.Length;
 
         ushort voxelID = 0;
 
-        SurfaceBlocks(ref voxelID, globalPosition, biome, terrainHeight);
-        LodeGeneration(ref voxelID, globalPosition, biome);
-        FloraGeneration(globalPosition, biome, terrainHeight);
-
-        if (globalPosition.y == -2)
-        {
-            voxelID = 2;
-        }
+        SurfaceBlocks(ref voxelID, globalPosition, mainBiome, terrainHeight, -40, 15);
+        LodeGeneration(ref voxelID, globalPosition, mainBiome);
+        FloraGeneration(globalPosition, mainBiome, terrainHeight);
 
         return voxelID;
     }
 
-    private static void SurfaceBlocks(ref ushort voxelID, int3 globalPosition, BiomeAttributes biome, int terrainHeight)
+    private static void SurfaceBlocks(ref ushort voxelID, int3 globalPosition, BiomeAttributes biome, int terrainHeight, int depth, int cavernHeight)
     {
+        int cavernTerrainHeight = terrainHeight + depth;
         if (globalPosition.y == terrainHeight)
         {
             voxelID = biome.surfaceBlock;
@@ -379,6 +342,10 @@ public class RimecraftWorld : MonoBehaviour
             voxelID = biome.subSurfaceBlock;
         }
         else if (globalPosition.y > terrainHeight)
+        {
+            voxelID = 0;
+        }
+        else if (globalPosition.y > cavernTerrainHeight && globalPosition.y < cavernTerrainHeight + cavernHeight)
         {
             voxelID = 0;
         }

@@ -10,28 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b0fdc39dd673774abe546398f10fd87, type: 3}
-  m_Name: default 1
+  m_Name: default layer
   m_EditorClassIdentifier: 
-  biomeName: default 1
-  offset: 22
-  scale: 1
-  terrainHeight: 40
-  terrainScale: 0.25
-  surfaceBlock: 2
-  subSurfaceBlock: 2
+  biomeName: default layer
+  offset: -1000
+  scale: 0.6
+  terrainHeight: 20
+  terrainScale: 0.5
+  surfaceBlock: 1
+  subSurfaceBlock: 1
   majorFloraZoneScale: 1.3
   majorFloraIndex: 0
-  majorFloraZoneThreshold: 0.67
+  majorFloraZoneThreshold: 0.721
   majorFloraPlacementScale: 15
-  majorFloraPlacementThreshold: 0.672
+  majorFloraPlacementThreshold: 0.717
   placeMajorFlora: 1
   maxHeight: 12
   minHeight: 5
-  lodes:
-  - nodeName: Ice
-    blockID: 2
-    minHeight: 5
-    maxHeight: 255
-    scale: 0.2
-    threshold: 0.5
-    noiseOffset: 0
+  lodes: []

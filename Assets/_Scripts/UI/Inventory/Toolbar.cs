@@ -12,7 +12,7 @@ public class Toolbar : MonoBehaviour
         ushort index = 1;
         foreach (UIItemSlot s in slots)
         {
-            ItemStack stack = new ItemStack(6, Random.Range(2, 65));
+            ItemStack stack = new ItemStack((ushort)Random.Range(1, 7), Random.Range(1, 65));
             ItemSlot slot = new ItemSlot(s, stack);
             index++;
         }

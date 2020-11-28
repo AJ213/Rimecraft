@@ -9,11 +9,11 @@ using System.Collections.Concurrent;
 [System.Serializable]
 public class WorldData
 {
-    public string worldName = "Prototype";
-    public int seed;
+    public static string worldName = "Prototype";
+    public static int seed;
 
     [System.NonSerialized]
-    public ConcurrentDictionary<int3, ChunkData> chunks = new ConcurrentDictionary<int3, ChunkData>();
+    public static ConcurrentDictionary<int3, ChunkData> chunks = new ConcurrentDictionary<int3, ChunkData>();
 
     [System.NonSerialized] // We use this as a ConcurrentSet, the byte does nothing
     public static ConcurrentDictionary<ChunkData, byte> modifiedChunks = new ConcurrentDictionary<ChunkData, byte>();
@@ -26,55 +26,47 @@ public class WorldData
         }
     }
 
-    public WorldData(string worldName, int seed)
+    public WorldData(string name, int theSeed)
     {
-        this.worldName = worldName;
-        this.seed = seed;
-    }
-
-    public WorldData(WorldData worldData)
-    {
-        worldName = worldData.worldName;
-        seed = worldData.seed;
+        worldName = name;
+        seed = theSeed;
     }
 
     public ChunkData RequestChunk(int3 coord, bool create)
     {
-        ChunkData c;
-
         if (chunks.ContainsKey(coord))
         {
-            c = chunks[coord];
+            return chunks[coord];
         }
-        else if (!create)
+
+        if (create)
         {
-            c = null;
+            LoadChunk(coord);
+            return chunks[coord];
         }
         else
         {
-            LoadChunk(coord);
-            c = chunks[coord];
+            return null;
         }
-
-        return c;
     }
 
     public static void LoadChunk(int3 coord)
     {
-        if (RimecraftWorld.Instance.worldData.chunks.ContainsKey(coord))
+        if (chunks.ContainsKey(coord))
         {
             return;
         }
 
-        ChunkData chunk = SaveSystem.LoadChunk(RimecraftWorld.Instance.worldData.worldName, coord);
+        /*ChunkData chunk = SaveSystem.LoadChunk(worldName, coord);
         if (chunk != null)
         {
-            RimecraftWorld.Instance.worldData.chunks.TryAdd(coord, chunk);
-            return;
+            chunks.TryAdd(coord, chunk);
         }
-
-        RimecraftWorld.Instance.worldData.chunks.TryAdd(coord, new ChunkData(coord));
-        ChunkData.Populate(RimecraftWorld.Instance.worldData.chunks[coord]);
+        else
+        {*/
+        chunks.TryAdd(coord, new ChunkData(coord));
+        ChunkData.Populate(chunks[coord]);
+        //}
     }
 
     public void SetVoxel(int3 globalPosition, ushort value)

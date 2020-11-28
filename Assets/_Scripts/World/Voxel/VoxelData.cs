@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class VoxelData
 {
-    public static int seed;
+    //public static int seed;
 
     public static readonly int TextureAtlasSizeInBlocks = 16;
 

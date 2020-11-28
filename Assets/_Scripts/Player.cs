@@ -66,6 +66,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            //SaveSystem.SaveWorld(RimecraftWorld.worldData);
             Application.Quit();
         }
 
@@ -106,8 +107,8 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             playerSounds.Play("WeaponUse");
-            GameObject projectile = (GameObject)Instantiate(Resources.Load("Mining Projectile"), weaponPosition.position, Quaternion.identity);
-            projectile.GetComponent<Projectile>().Fire(Camera.main.transform.forward, 5, 10);
+            GameObject projectile = (GameObject)Instantiate(Resources.Load("Mining Projectile"), Camera.main.transform.position + Camera.main.transform.forward, Quaternion.identity);
+            projectile.GetComponent<Projectile>().Fire(Camera.main.transform.forward, 10, 3);
         }
 
         if (highlightBlock.gameObject.activeSelf)

@@ -28,11 +28,7 @@ public static class Structure
             height = minTrunkHeight;
         }
 
-        for (int i = 1; i < height; i++)
-        {
-            queue.Enqueue(new VoxelMod(new int3(position.x, position.y + i, position.z), 4));
-        }
-        for (int y = 1; y < 3; y++)
+        for (int y = 1; y < 3; y += 1)
         {
             for (int x = -3; x < 3; x++)
             {
@@ -41,6 +37,10 @@ public static class Structure
                     queue.Enqueue(new VoxelMod(new int3(position.x + x, position.y + height - y, position.z + z), 6));
                 }
             }
+        }
+        for (int i = 1; i < height; i++)
+        {
+            queue.Enqueue(new VoxelMod(new int3(position.x, position.y + i, position.z), 4));
         }
 
         return queue;

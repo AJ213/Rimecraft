@@ -15,4 +15,7 @@ public class Settings
 
     [Range(0.1f, 10f)]
     public float mouseSensitivity = 2;
+
+    [Range(0.01f, 1f)]
+    public float volume = 0.25f;
 }

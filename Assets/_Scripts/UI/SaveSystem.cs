@@ -8,15 +8,17 @@ using Unity.Mathematics;
 
 public static class SaveSystem
 {
+    private static string appPath;
+
     public static void SaveWorld(WorldData world)
     {
-        string savePath = RimecraftWorld.Instance.appPath + "/save/" + world.worldName + "/";
+        string savePath = appPath + "/saves/" + WorldData.worldName + "/";
         if (!Directory.Exists(savePath))
         {
             Directory.CreateDirectory(savePath);
         }
 
-        Debug.Log("Saving " + world.worldName);
+        Debug.Log("Saving " + WorldData.worldName);
 
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream stream = new FileStream(savePath + "world.world", FileMode.Create);
@@ -36,15 +38,16 @@ public static class SaveSystem
         int count = 0;
         foreach (ChunkData chunk in chunks)
         {
-            SaveSystem.SaveChunk(chunk, world.worldName);
+            SaveSystem.SaveChunk(chunk, WorldData.worldName);
             count++;
         }
         Debug.Log(count + " chunks saved.");
     }
 
-    public static WorldData LoadWorld(string worldName, int seed = 0)
+    public static WorldData LoadWorld(string worldName = "New World", int seed = 0)
     {
-        string loadPath = RimecraftWorld.Instance.appPath + "/saves/" + worldName + "/";
+        appPath = Application.persistentDataPath;
+        string loadPath = appPath + "/saves/" + worldName + "/";
         if (File.Exists(loadPath + "world.world"))
         {
             Debug.Log(worldName + " found. Loading from save.");
@@ -54,7 +57,7 @@ public static class SaveSystem
 
             WorldData world = formatter.Deserialize(stream) as WorldData;
             stream.Close();
-            return new WorldData(world);
+            return world;
         }
         else
         {
@@ -71,7 +74,7 @@ public static class SaveSystem
     {
         string chunkName = chunk.Coord.x + "-" + chunk.Coord.y + "-" + chunk.Coord.z;
 
-        string savePath = RimecraftWorld.Instance.appPath + "/save/" + worldName + "/chunks/";
+        string savePath = appPath + "/saves/" + worldName + "/chunks/";
         if (!Directory.Exists(savePath))
         {
             Directory.CreateDirectory(savePath);
@@ -88,7 +91,7 @@ public static class SaveSystem
     {
         string chunkName = position.x + "-" + position.y + "-" + position.z;
 
-        string loadPath = RimecraftWorld.Instance.appPath + "/saves/" + worldName + "/chunks/" + chunkName + ".chunk";
+        string loadPath = appPath + "/saves/" + worldName + "/chunks/" + chunkName + ".chunk";
 
         if (File.Exists(loadPath))
         {

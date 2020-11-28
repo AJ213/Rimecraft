@@ -41,7 +41,7 @@ public class Chunk
         chunkObject.name = "Chunk " + coord.x + ", " + coord.y + "," + coord.z;
         position = new int3(Mathf.FloorToInt(chunkObject.transform.position.x), Mathf.FloorToInt(chunkObject.transform.position.y), Mathf.FloorToInt(chunkObject.transform.position.z));
 
-        chunkData = RimecraftWorld.Instance.worldData.RequestChunk(coord, true);
+        chunkData = RimecraftWorld.worldData.RequestChunk(coord, true);
         chunkData.chunk = this;
 
         RimecraftWorld.Instance.AddChunkToUpdate(this);
