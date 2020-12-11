@@ -330,16 +330,18 @@ public class RimecraftWorld : MonoBehaviour
 
         ushort voxelID = 0;
 
-        SurfaceBlocks(ref voxelID, globalPosition, mainBiome, terrainHeight, -40, 15);
+        SurfaceBlocks(ref voxelID, globalPosition, mainBiome, terrainHeight, 2, 15);
         LodeGeneration(ref voxelID, globalPosition, mainBiome);
         FloraGeneration(globalPosition, mainBiome, terrainHeight);
 
         return voxelID;
     }
 
-    private static void SurfaceBlocks(ref ushort voxelID, int3 globalPosition, BiomeAttributes biome, int terrainHeight, int depth, int cavernHeight)
+    private static void SurfaceBlocks(ref ushort voxelID, int3 globalPosition, BiomeAttributes biome, int terrainHeight, int depthMultiplier, int cavernHeight)
     {
-        int cavernTerrainHeight = terrainHeight + depth;
+        int cavernDepthAtPosition = (int)(math.pow(4, math.ceil(math.log10(math.abs(globalPosition.y)) / math.log10(4))) / depthMultiplier);
+        int cavernTerrainHeight = terrainHeight - cavernDepthAtPosition;
+        int heightMultiplier = (int)math.max(1, math.log2(math.abs(globalPosition.y)) - 3);
         if (globalPosition.y == terrainHeight)
         {
             voxelID = biome.surfaceBlock;
@@ -352,7 +354,7 @@ public class RimecraftWorld : MonoBehaviour
         {
             voxelID = 0;
         }
-        else if (globalPosition.y > cavernTerrainHeight && globalPosition.y < cavernTerrainHeight + cavernHeight)
+        else if (globalPosition.y > cavernTerrainHeight && globalPosition.y < cavernTerrainHeight + (cavernHeight * heightMultiplier))
         {
             voxelID = 0;
         }

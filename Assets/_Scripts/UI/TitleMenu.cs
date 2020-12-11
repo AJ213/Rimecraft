@@ -105,7 +105,7 @@ public class TitleMenu : MonoBehaviour
 
     public void UpdateVolumeSlider()
     {
-        volumeText.text = "Volume Sensitivity: " + ((int)(volumeSlider.value * 100)).ToString() + "%";
+        volumeText.text = "Volume: " + ((int)(volumeSlider.value * 100)).ToString() + "%";
         audioMixer.SetFloat("Master Volume", Mathf.Log10(volumeSlider.value) * 20);
     }
 }

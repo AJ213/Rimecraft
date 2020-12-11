@@ -122,6 +122,10 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
+  sounds:
+  - {fileID: 1936072521878475978, guid: 780ee6e3619b3f64e9d1ab2705982ed8, type: 3}
+  - {fileID: 7496101698389514555, guid: 4851b1294e1f17c439b7dacf0363c3f0, type: 3}
+  - {fileID: 3379517680968309573, guid: f86651bbf887d1d438c5a53f30fda933, type: 3}
   speed: 1
   bounceCoolDown: 0.1
   bouncing: 0

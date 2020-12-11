@@ -765,7 +765,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 24300002, guid: bf46b738770b3244c8d4979f86546b42, type: 2}
   m_audioClip: {fileID: 8300000, guid: 47de8dda87e73bf4b9c2e85a7989a515, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.959
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -4168,7 +4168,7 @@ MonoBehaviour:
   sounds:
   - name: ButtonHover
     clip: {fileID: 8300000, guid: bb714a1b8d26ba042a22cd3fcee97c8d, type: 3}
-    volume: 1
+    volume: 0.043
     volumeVariance: 0
     pitch: 1
     pitchVariance: 0
@@ -4178,7 +4178,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: ButtonPress
     clip: {fileID: 8300000, guid: 908f92e9a7ad49443af2fed0f5c57a0e, type: 3}
-    volume: 1
+    volume: 0.054
     volumeVariance: 0
     pitch: 1
     pitchVariance: 0
@@ -4514,7 +4514,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5533660740578474883, guid: 361e53be3afe61046981aca2adfbe792, type: 3}
       propertyPath: m_MaxValue
-      value: 32
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 5533660740578474883, guid: 361e53be3afe61046981aca2adfbe792, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode

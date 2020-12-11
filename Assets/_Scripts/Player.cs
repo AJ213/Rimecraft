@@ -176,6 +176,11 @@ public class Player : MonoBehaviour
             RimecraftWorld.Instance.InUI = !RimecraftWorld.Instance.InUI;
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            this.transform.position = RimecraftWorld.Instance.spawnPosition;
+        }
+
         if (!RimecraftWorld.Instance.InUI)
         {
             GetPlayerInputs();

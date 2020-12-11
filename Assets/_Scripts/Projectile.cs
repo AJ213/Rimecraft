@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
 
     public int3 projectileChunkCoord;
     private int3 projectileLastChunkCoord;
+    [SerializeField] private GameObject[] sounds = default;
 
     [SerializeField] private float speed = 1;
     [SerializeField] private float bounceCoolDown = 0.3f;
@@ -50,7 +51,27 @@ public class Projectile : MonoBehaviour
             if (!bouncing)
             {
                 int3 breakBlock = rbody.lastCollidedWithBlockLocation;
+                // Ice, Snow, Stone
+                VoxelState voxel = WorldHelper.GetVoxelFromPosition(breakBlock);
+                ushort blockBreakingID = 0;
+                if (voxel != null)
+                {
+                    blockBreakingID = WorldHelper.GetVoxelFromPosition(breakBlock).id;
+                }
+
                 WorldHelper.GetChunkFromPosition(breakBlock).EditVoxel(breakBlock, 0);
+                if (blockBreakingID == 2)
+                {
+                    Instantiate(sounds[0], this.transform.position, Quaternion.identity);
+                }
+                else if (blockBreakingID == 1)
+                {
+                    Instantiate(sounds[1], this.transform.position, Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(sounds[2], this.transform.position, Quaternion.identity);
+                }
                 CalculateReflection();
                 StartCoroutine(Bouncing());
                 bounces--;
