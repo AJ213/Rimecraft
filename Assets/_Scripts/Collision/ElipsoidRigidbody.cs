@@ -51,7 +51,7 @@ public class ElipsoidRigidbody : MonoBehaviour
     public void CalculateVelocity(float horizontal, float vertical, float speed)
     {
         // Affect verical momentum with gravity.
-        if (VerticalMomentum > gravity && usesGravity)
+        if (usesGravity)
         {
             VerticalMomentum += Time.fixedDeltaTime * gravity;
         }
@@ -59,44 +59,6 @@ public class ElipsoidRigidbody : MonoBehaviour
         // if we're sprinting, use the sprint multiplier.
 
         velocity = ((transform.forward * vertical) + (transform.right * horizontal)) * Time.fixedDeltaTime * speed;
-
-        // Apply vertical momentum (falling/jumping).
-        if (usesGravity)
-        {
-            velocity += Vector3.up * VerticalMomentum * Time.fixedDeltaTime;
-        }
-
-        if ((velocity.z > 0 && FrontCollision()) || (velocity.z < 0 && BackCollision()))
-        {
-            velocity.z = 0;
-        }
-
-        if ((velocity.x > 0 && RightCollision()) || (velocity.x < 0 && LeftCollision()))
-        {
-            velocity.x = 0;
-        }
-
-        if (velocity.y < 0)
-        {
-            velocity.y = CheckDownSpeed(velocity.y);
-        }
-        else if (velocity.y > 0)
-        {
-            velocity.y = CheckUpSpeed(velocity.y);
-        }
-    }
-
-    public void CalculateVelocity(Vector3 directionVect, float speed)
-    {
-        // Affect verical momentum with gravity.
-        if (VerticalMomentum > gravity && usesGravity)
-        {
-            VerticalMomentum += Time.fixedDeltaTime * gravity;
-        }
-
-        // if we're sprinting, use the sprint multiplier.
-
-        velocity = directionVect * Time.fixedDeltaTime * speed;
 
         // Apply vertical momentum (falling/jumping).
         if (usesGravity)

@@ -1,4 +1,5 @@
-﻿public class ItemStack
+﻿[System.Serializable]
+public class ItemStack
 {
     public ushort id;
     public static readonly int maxSize = 100;

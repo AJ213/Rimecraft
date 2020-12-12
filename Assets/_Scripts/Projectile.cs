@@ -77,6 +77,13 @@ public class Projectile : MonoBehaviour
                 {
                     Instantiate(sounds[2], this.transform.position, Quaternion.identity);
                 }
+
+                if (blockBreakingID != 0)
+                {
+                    GameObject droppedBlock = (GameObject)Instantiate(Resources.Load("DroppedItem"), this.transform.position, Quaternion.identity);
+                    droppedBlock.GetComponent<DropItem>().SetItemStack(blockBreakingID, 1);
+                }
+
                 CalculateReflection();
                 StartCoroutine(Bouncing());
                 bounces--;

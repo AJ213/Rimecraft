@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
     // Misc
 
     private Transform cam;
-    [SerializeField] private GameObject inventory = default;
+    [SerializeField] public GameObject inventory = default;
 
     private void FixedUpdate()
     {

@@ -9,7 +9,9 @@ public class SphericalRigidbody : MonoBehaviour
     [SerializeField] private Vector3 velocity;
     public int3 lastCollidedWithBlockLocation;
     public bool colliding = false;
+    [SerializeField] private bool usesGravity = false;
     public Vector3 collisionNormal = Vector3.zero;
+    public float VerticalMomentum { get; set; }
 
     private bool Colliding(int3 position)
     {
@@ -91,7 +93,19 @@ public class SphericalRigidbody : MonoBehaviour
 
     public void CalculateVelocity(Vector3 directionVect, float speed)
     {
+        // Affect verical momentum with gravity.
+        if (usesGravity)
+        {
+            VerticalMomentum += Time.fixedDeltaTime * -9.81f;
+        }
+
         velocity = directionVect * Time.fixedDeltaTime * speed;
+
+        // Apply vertical momentum (falling).
+        if (usesGravity)
+        {
+            velocity += Vector3.up * VerticalMomentum * Time.fixedDeltaTime;
+        }
 
         if ((velocity.z > 0 && FrontCollision()) || (velocity.z < 0 && BackCollision()))
         {
