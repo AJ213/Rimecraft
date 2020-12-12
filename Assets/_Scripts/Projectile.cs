@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
 
@@ -36,7 +35,8 @@ public class Projectile : MonoBehaviour
 
         if (!projectileChunkCoord.Equals(projectileLastChunkCoord))
         {
-            if (!RimecraftWorld.Instance.chunks.ContainsKey(projectileChunkCoord))
+            bool3 tooFar = math.abs(RimecraftWorld.Instance.playerChunkCoord - projectileChunkCoord) >= RimecraftWorld.settings.viewDistance;
+            if (tooFar.x || tooFar.y || tooFar.z)
             {
                 Destroy(this.gameObject);
             }

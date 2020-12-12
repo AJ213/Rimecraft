@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using Unity.Mathematics;
-using Unity.Entities;
-using System.Linq;
 using Unity.Jobs;
 using Unity.Collections;
 using System.Collections.Concurrent;
-using System.Configuration;
 
 public class RimecraftWorld : MonoBehaviour
 {
