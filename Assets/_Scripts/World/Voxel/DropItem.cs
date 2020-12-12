@@ -25,7 +25,7 @@ public class DropItem : MonoBehaviour
     private void FixedUpdate()
     {
         rb.CalculateVelocity(Vector3.zero, 5);
-        transform.Rotate(3 * Vector3.up * Time.fixedDeltaTime);
+        transform.Rotate(10 * Vector3.up * Time.fixedDeltaTime);
         if (Vector3.Distance(player.transform.position, this.transform.position) <= pickupProximity)
         {
             PickupItem();

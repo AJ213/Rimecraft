@@ -121,7 +121,7 @@ MonoBehaviour:
   items:
     id: 1
     amount: 90
-  pickupProximity: 2
+  pickupProximity: 1
   decayTime: 60
 --- !u!108 &-3816727931109639660
 Light:
