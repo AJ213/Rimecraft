@@ -10,13 +10,6 @@ public class UIItemSlot : MonoBehaviour
     public Image slotIcon;
     public TextMeshProUGUI slotAmount;
 
-    private RimecraftWorld world;
-
-    private void Awake()
-    {
-        world = GameObject.Find("World").GetComponent<RimecraftWorld>();
-    }
-
     public bool HasItem
     {
         get
@@ -51,7 +44,7 @@ public class UIItemSlot : MonoBehaviour
     {
         if (itemSlot != null && itemSlot.HasItem)
         {
-            slotIcon.sprite = world.blockTypes[itemSlot.stack.id].icon;
+            slotIcon.sprite = RimecraftWorld.Instance.blockTypes[itemSlot.stack.id].icon;
             slotAmount.text = itemSlot.stack.amount.ToString();
             slotIcon.enabled = true;
             slotAmount.enabled = true;

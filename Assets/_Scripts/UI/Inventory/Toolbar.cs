@@ -1,21 +1,22 @@
 ﻿using UnityEngine;
 
+[System.Serializable]
 public class Toolbar : MonoBehaviour
 {
-    public UIItemSlot[] slots;
+    public InventoryRow inventory;
     public RectTransform highlight;
     public Player player;
     public int slotIndex = 0;
 
     private void Start()
     {
-        ushort index = 1;
-        foreach (UIItemSlot s in slots)
+        /*ushort index = 1;
+        foreach (UIItemSlot s in inventory.slots)
         {
             ItemStack stack = new ItemStack((ushort)Random.Range(1, 7), Random.Range(1, 65));
             ItemSlot slot = new ItemSlot(s, stack);
             index++;
-        }
+        }*/
     }
 
     private void Update()
@@ -33,17 +34,17 @@ public class Toolbar : MonoBehaviour
                 slotIndex++;
             }
 
-            if (slotIndex > slots.Length - 1)
+            if (slotIndex > inventory.slots.Length - 1)
             {
                 slotIndex = 0;
             }
 
             if (slotIndex < 0)
             {
-                slotIndex = slots.Length - 1;
+                slotIndex = inventory.slots.Length - 1;
             }
 
-            highlight.position = slots[slotIndex].slotIcon.transform.position;
+            highlight.position = inventory.slots[slotIndex].slotIcon.transform.position;
         }
     }
 }

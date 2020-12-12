@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ccb309c8c41f664d834cf4029383839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectRadius: 0.25
+  objectRadius: 0.1
   velocity: {x: 0, y: 0, z: 0}
   lastCollidedWithBlockLocation:
     x: 0

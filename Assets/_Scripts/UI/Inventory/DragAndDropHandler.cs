@@ -64,6 +64,25 @@ public class DragAndDropHandler : MonoBehaviour
                 clickedSlot.itemSlot.InsertStack(oldCursorSlot);
                 cursorSlot.itemSlot.InsertStack(oldSlot);
             }
+            else
+            {
+                if (cursorSlot.itemSlot.stack.amount + clickedSlot.itemSlot.stack.amount < ItemStack.maxSize)
+                {
+                    ItemStack resultingStack = new ItemStack(cursorSlot.itemSlot.stack.id, cursorSlot.itemSlot.stack.amount + clickedSlot.itemSlot.stack.amount);
+                    clickedSlot.itemSlot.InsertStack(resultingStack);
+                    cursorSlot.itemSlot.EmptySlot();
+                }
+                else
+                {
+                    if (clickedSlot.itemSlot.stack.amount < ItemStack.maxSize)
+                    {
+                        int takeAmount = ItemStack.maxSize - clickedSlot.itemSlot.stack.amount;
+                        ItemStack resultingStack = new ItemStack(cursorSlot.itemSlot.stack.id, ItemStack.maxSize);
+                        clickedSlot.itemSlot.InsertStack(resultingStack);
+                        cursorSlot.itemSlot.Take(takeAmount);
+                    }
+                }
+            }
         }
     }
 

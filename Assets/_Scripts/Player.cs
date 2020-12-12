@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
     // Misc
 
     private Transform cam;
-    [SerializeField] private Toolbar toolbar = null;
+    [SerializeField] private GameObject inventory = default;
 
     private void FixedUpdate()
     {
@@ -116,11 +116,12 @@ public class Player : MonoBehaviour
             // Build Block
             if (Input.GetMouseButtonDown(1))
             {
-                if (toolbar.slots[toolbar.slotIndex].HasItem)
+                Toolbar toolbar = inventory.GetComponent<Inventory>().toolbar;
+                if (toolbar.inventory.slots[toolbar.slotIndex].HasItem)
                 {
                     playerSounds.Play("BlockPlace");
-                    WorldHelper.GetChunkFromPosition(placeBlockPosition).EditVoxel(placeBlockPosition, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
-                    toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
+                    WorldHelper.GetChunkFromPosition(placeBlockPosition).EditVoxel(placeBlockPosition, toolbar.inventory.slots[toolbar.slotIndex].itemSlot.stack.id);
+                    toolbar.inventory.slots[toolbar.slotIndex].itemSlot.Take(1);
                 }
             }
         }
@@ -174,6 +175,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             RimecraftWorld.Instance.InUI = !RimecraftWorld.Instance.InUI;
+            inventory.GetComponent<Inventory>().storage.SetActive(RimecraftWorld.Instance.InUI);
         }
 
         if (Input.GetKeyDown(KeyCode.R))

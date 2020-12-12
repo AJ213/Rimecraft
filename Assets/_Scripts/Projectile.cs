@@ -59,7 +59,12 @@ public class Projectile : MonoBehaviour
                     blockBreakingID = WorldHelper.GetVoxelFromPosition(breakBlock).id;
                 }
 
-                WorldHelper.GetChunkFromPosition(breakBlock).EditVoxel(breakBlock, 0);
+                Chunk chunk = WorldHelper.GetChunkFromPosition(breakBlock);
+                if (chunk != null)
+                {
+                    chunk.EditVoxel(breakBlock, 0);
+                }
+
                 if (blockBreakingID == 2)
                 {
                     Instantiate(sounds[0], this.transform.position, Quaternion.identity);

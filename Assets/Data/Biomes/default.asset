@@ -42,13 +42,6 @@ MonoBehaviour:
     scale: 0.2
     threshold: 0.5
     noiseOffset: 500
-  - nodeName: Cave
-    blockID: 0
-    minHeight: -500
-    maxHeight: 400
-    scale: 0.03
-    threshold: 0.6
-    noiseOffset: 1000
   - nodeName: Ore
     blockID: 5
     minHeight: -500
@@ -56,3 +49,10 @@ MonoBehaviour:
     scale: 0.2
     threshold: 0.6
     noiseOffset: 1500
+  - nodeName: Cave
+    blockID: 0
+    minHeight: -500
+    maxHeight: 400
+    scale: 0.03
+    threshold: 0.6
+    noiseOffset: 1000
