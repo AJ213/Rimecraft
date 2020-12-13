@@ -17,6 +17,7 @@ public class SceneChanger : MonoBehaviour
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 
