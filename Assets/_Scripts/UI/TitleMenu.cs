@@ -82,12 +82,7 @@ public class TitleMenu : MonoBehaviour
         //string worldName = worldNameField.text;
         WorldData.seed = seed;
         //WorldData.worldName = name;
-        SceneManager.LoadScene("InGame", LoadSceneMode.Single);
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
+        GetComponent<SceneChanger>().FadeToScene(1);
     }
 
     public void UpdateViewDstSlider()

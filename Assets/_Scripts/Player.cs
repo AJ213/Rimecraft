@@ -36,6 +36,8 @@ public class Player : MonoBehaviour
     private float horizontal;
     private float vertical;
 
+    [SerializeField] private SceneChanger sceneChanger = default;
+
     // Misc
 
     private Transform cam;
@@ -64,7 +66,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.Quit();
+            sceneChanger.FadeToScene(0);
         }
 
         horizontal = Input.GetAxis("Horizontal");

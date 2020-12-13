@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public static class FadeMixerGroup
@@ -19,6 +20,11 @@ public static class FadeMixerGroup
             audioMixer.SetFloat(exposedParam, Mathf.Log10(newVol) * 20);
             yield return null;
         }
+        if (SceneManager.GetActiveScene().buildIndex != SceneChanger.indexToLoad)
+        {
+            SceneChanger.LoadScene();
+        }
+
         yield break;
     }
 }
