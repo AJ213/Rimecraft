@@ -7,7 +7,7 @@ using System.IO;
 public class AtlasPacker : EditorWindow
 {
     private int blockSize = 256;
-    private int atlasSizeInBlocks = 16;
+    private int atlasSizeInBlocks = 4;
     private int atlasSize;
 
     private Object[] rawTextures = new Object[256];

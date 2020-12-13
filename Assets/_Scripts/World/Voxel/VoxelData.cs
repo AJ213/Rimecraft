@@ -5,7 +5,7 @@ public static class VoxelData
 {
     //public static int seed;
 
-    public static readonly int TextureAtlasSizeInBlocks = 16;
+    public static readonly int TextureAtlasSizeInBlocks = 4;
 
     public static float NoramlizedBlockTextureSize
     { get { return 1 / (float)TextureAtlasSizeInBlocks; } }
