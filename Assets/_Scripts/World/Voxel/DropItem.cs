@@ -8,14 +8,16 @@ public class DropItem : MonoBehaviour
     private SphericalRigidbody rb;
     [SerializeField] private float decayTime = 60;
 
+    [SerializeField] private Color[] colors;
+    [SerializeField] private Material[] materials;
+
     private void Awake()
     {
         if (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player");
         }
-        Color color = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
-        GetComponent<Light>().color = color;
+
         rb = GetComponent<SphericalRigidbody>();
         Destroy(this.gameObject, decayTime);
     }
@@ -32,7 +34,16 @@ public class DropItem : MonoBehaviour
 
     public void SetItemStack(ushort id, int amount)
     {
-        items = new ItemStack(id, amount);
+        if (id == 0)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            items = new ItemStack(id, amount);
+            GetComponent<Light>().color = colors[items.id];
+            GetComponent<MeshRenderer>().material = materials[items.id];
+        }
     }
 
     private void PickupItem()

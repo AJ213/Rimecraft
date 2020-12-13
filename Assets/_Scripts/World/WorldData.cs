@@ -57,16 +57,8 @@ public class WorldData
             return;
         }
 
-        /*ChunkData chunk = SaveSystem.LoadChunk(worldName, coord);
-        if (chunk != null)
-        {
-            chunks.TryAdd(coord, chunk);
-        }
-        else
-        {*/
         chunks.TryAdd(coord, new ChunkData(coord));
         ChunkData.Populate(chunks[coord]);
-        //}
     }
 
     public void SetVoxel(int3 globalPosition, ushort value)

@@ -121,8 +121,24 @@ MonoBehaviour:
   items:
     id: 1
     amount: 90
-  pickupProximity: 1
+  pickupProximity: 1.8
   decayTime: 60
+  colors:
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 0.19607843, g: 0.25490198, b: 0.19607843, a: 1}
+  - {r: 0.4, g: 0.2509804, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  materials:
+  - {fileID: 2100000, guid: 937ecdf84165a3947a26a115d5dad746, type: 2}
+  - {fileID: 2100000, guid: 0ddea3b563d2c8447bef53f3dc8429e5, type: 2}
+  - {fileID: 2100000, guid: e14cf7f68e9a334498a46b5a96996266, type: 2}
+  - {fileID: 2100000, guid: 35f76852424c4ed4385138cc8217fa76, type: 2}
+  - {fileID: 2100000, guid: b6096af8765caff44883afb44ff41078, type: 2}
+  - {fileID: 2100000, guid: c2868db50a91b154c9582150baeb2667, type: 2}
+  - {fileID: 2100000, guid: f057adc5af9504e4a86f3f73689bc623, type: 2}
 --- !u!108 &-3816727931109639660
 Light:
   m_ObjectHideFlags: 0
@@ -135,7 +151,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0, g: 0.60062504, b: 1, a: 1}
-  m_Intensity: 795.7747
+  m_Intensity: 7957.747
   m_Range: 0.25
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -182,7 +198,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_ShadowRadius: 0
+  m_ShadowRadius: 1.25
   m_ShadowAngle: 0
 --- !u!114 &-3123862710666686562
 MonoBehaviour:
@@ -204,7 +220,7 @@ MonoBehaviour:
   m_PointlightHDType: 0
   m_SpotLightShape: 0
   m_AreaLightShape: 0
-  m_Intensity: 10000
+  m_Intensity: 100000
   m_EnableSpotReflector: 0
   m_LuxAtDistance: 1
   m_InnerSpotPercent: 0
@@ -218,7 +234,7 @@ MonoBehaviour:
   m_ShapeWidth: 0.5
   m_ShapeHeight: 0.5
   m_AspectRatio: 1
-  m_ShapeRadius: 0
+  m_ShapeRadius: 1.25
   m_SoftnessScale: 1
   m_UseCustomSpotLightShadowCone: 0
   m_CustomSpotLightShadowCone: 30

@@ -61,7 +61,6 @@ public class RimecraftWorld : MonoBehaviour
         worldData = new WorldData("null", WorldData.seed);
         //Debug.Log("Generating new world using seed " + WorldData.seed);
 
-        //worldData = SaveSystem.LoadWorld(WorldData.worldName, WorldData.seed);
         if (settings == null)
         {
             settings = new Settings();

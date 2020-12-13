@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Moving Mouse
+    // Mouse
 
-    private float mouseHorizontal;
-    private float mouseVertical;
+    [SerializeField] private float minimumY = -90F;
+    [SerializeField] private float maximumY = 90F;
+
+    private float rotationY = 0F;
 
     // Placing Blocks
 
@@ -55,15 +57,6 @@ public class Player : MonoBehaviour
             {
                 rbody.CalculateVelocity(horizontal, vertical, walkSpeed);
             }
-
-            float rotationX = cam.transform.localEulerAngles.y + (Input.GetAxis("Mouse X") * RimecraftWorld.settings.mouseSensitivity);
-
-            rotationY += Input.GetAxis("Mouse Y") * RimecraftWorld.settings.mouseSensitivity;
-            rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
-
-            cam.transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
-            cam.transform.position = new Vector3(transform.position.x, transform.position.y + 1.62f, transform.position.z);
-            transform.localEulerAngles = new Vector3(0, cam.transform.localEulerAngles.y, 0);
         }
     }
 
@@ -71,14 +64,11 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            //SaveSystem.SaveWorld(RimecraftWorld.worldData);
             Application.Quit();
         }
 
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
-        // mouseHorizontal = Input.GetAxis("Mouse X");
-        // mouseVertical = Input.GetAxis("Mouse Y");
 
         if (Input.GetButtonDown("Sprint"))
         {
@@ -175,13 +165,17 @@ public class Player : MonoBehaviour
         RimecraftWorld.Instance.InUI = false;
     }
 
-    public float minimumY = -90F;
-    public float maximumY = 90F;
-
-    private float rotationY = 0F;
-
     private void Update()
     {
+        float rotationX = cam.transform.localEulerAngles.y + (Input.GetAxis("Mouse X") * RimecraftWorld.settings.mouseSensitivity);
+
+        rotationY += Input.GetAxis("Mouse Y") * RimecraftWorld.settings.mouseSensitivity;
+        rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
+
+        cam.transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
+        cam.transform.position = new Vector3(transform.position.x, transform.position.y + 1.62f, transform.position.z - 0.15f);
+        transform.localEulerAngles = new Vector3(0, cam.transform.localEulerAngles.y, 0);
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             RimecraftWorld.Instance.InUI = !RimecraftWorld.Instance.InUI;
