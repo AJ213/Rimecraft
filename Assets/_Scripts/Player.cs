@@ -56,8 +56,14 @@ public class Player : MonoBehaviour
                 rbody.CalculateVelocity(horizontal, vertical, walkSpeed);
             }
 
-            transform.Rotate(Vector3.up * mouseHorizontal * RimecraftWorld.settings.mouseSensitivity);
-            cam.Rotate(Vector3.right * -mouseVertical * RimecraftWorld.settings.mouseSensitivity);
+            float rotationX = cam.transform.localEulerAngles.y + (Input.GetAxis("Mouse X") * RimecraftWorld.settings.mouseSensitivity);
+
+            rotationY += Input.GetAxis("Mouse Y") * RimecraftWorld.settings.mouseSensitivity;
+            rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
+
+            cam.transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
+            cam.transform.position = new Vector3(transform.position.x, transform.position.y + 1.62f, transform.position.z);
+            transform.localEulerAngles = new Vector3(0, cam.transform.localEulerAngles.y, 0);
         }
     }
 
@@ -71,8 +77,8 @@ public class Player : MonoBehaviour
 
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
-        mouseHorizontal = Input.GetAxis("Mouse X");
-        mouseVertical = Input.GetAxis("Mouse Y");
+        // mouseHorizontal = Input.GetAxis("Mouse X");
+        // mouseVertical = Input.GetAxis("Mouse Y");
 
         if (Input.GetButtonDown("Sprint"))
         {
@@ -168,6 +174,11 @@ public class Player : MonoBehaviour
         cam = Camera.main.transform;
         RimecraftWorld.Instance.InUI = false;
     }
+
+    public float minimumY = -90F;
+    public float maximumY = 90F;
+
+    private float rotationY = 0F;
 
     private void Update()
     {

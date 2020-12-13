@@ -8,6 +8,7 @@ public class PlayAudioAtArea : MonoBehaviour
     private Transform player;
     private int3 lastLocation;
     private AudioManager audioManager;
+    [SerializeField] private ParticleSystem snow;
     [SerializeField] private float maxVolume = 0.7f;
     [SerializeField] private float minValue = 0;
     [SerializeField] private float volumeChangeSpeed = 0.3f;
@@ -33,6 +34,7 @@ public class PlayAudioAtArea : MonoBehaviour
             if (player.position.y < yValue)
             {
                 MakeWindSilent(0);
+                snow.Stop();
             }
             else if (!IsVoxelAboveOrBelow(5))
             {
@@ -40,6 +42,7 @@ public class PlayAudioAtArea : MonoBehaviour
             }
             else
             {
+                snow.Play();
                 currentVolume = Mathf.Clamp(currentVolume + (volumeChangeSpeed * Time.deltaTime), minValue, maxVolume);
                 if (currentVolume == maxVolume)
                 {
@@ -48,6 +51,26 @@ public class PlayAudioAtArea : MonoBehaviour
             }
             wind.volume = currentVolume;
         }
+    }
+
+    private ParticleSystem.Particle[] particles;
+
+    private void LateUpdate()
+    {
+        if (particles == null || particles.Length < snow.main.maxParticles)
+            particles = new ParticleSystem.Particle[snow.main.maxParticles];
+
+        int numAlive = snow.GetParticles(particles);
+        for (int i = 0; i < particles.Length; i++)
+        {
+            VoxelState voxel = WorldHelper.GetVoxelFromPosition(particles[i].position);
+            if (voxel == null || voxel.id != 0)
+            {
+                //particles[i].position = new Vector3(particles[i].position.x, snow.transform.position.y, particles[i].position.z);
+                particles[i].remainingLifetime = 0;
+            }
+        }
+        snow.SetParticles(particles, numAlive);
     }
 
     private void MakeWindSilent(float minVolume)
