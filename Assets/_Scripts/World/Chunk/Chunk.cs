@@ -59,9 +59,15 @@ public class Chunk
                 {
                     for (int z = 0; z < Constants.ChunkSizeZ; z++)
                     {
-                        if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
+                        if (chunkData.map[x, y, z] != null)
                         {
-                            UpdateMeshData(new int3(x, y, z));
+                            if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id] != null)
+                            {
+                                if (RimecraftWorld.Instance.blockTypes[chunkData.map[x, y, z].id].isSolid)
+                                {
+                                    UpdateMeshData(new int3(x, y, z));
+                                }
+                            }
                         }
                     }
                 }

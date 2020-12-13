@@ -13,9 +13,6 @@ public class TitleMenu : MonoBehaviour
     [SerializeField] private GameObject settingsObject = null;
     [SerializeField] private AudioMixer audioMixer = default;
 
-    [Header("Main Menu UI Elements")]
-    [SerializeField] private TextMeshProUGUI worldNameField = null;
-
     [SerializeField] private TextMeshProUGUI seedField = null;
 
     [Header("Settings UI Elements")]

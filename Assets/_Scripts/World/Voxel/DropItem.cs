@@ -8,8 +8,8 @@ public class DropItem : MonoBehaviour
     private SphericalRigidbody rb;
     [SerializeField] private float decayTime = 60;
 
-    [SerializeField] private Color[] colors;
-    [SerializeField] private Material[] materials;
+    [SerializeField] private Color[] colors = default;
+    [SerializeField] private Material[] materials = default;
 
     private void Awake()
     {

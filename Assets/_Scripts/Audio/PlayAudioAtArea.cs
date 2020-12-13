@@ -8,7 +8,7 @@ public class PlayAudioAtArea : MonoBehaviour
     private Transform player;
     private int3 lastLocation;
     private AudioManager audioManager;
-    [SerializeField] private ParticleSystem snow;
+    [SerializeField] private ParticleSystem snow = default;
     [SerializeField] private float maxVolume = 0.7f;
     [SerializeField] private float minValue = 0;
     [SerializeField] private float volumeChangeSpeed = 0.3f;
